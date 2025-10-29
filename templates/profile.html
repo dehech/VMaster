@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Profil - VMaster{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='profile.css') }}">
+
+<div class="container">
+  <h1>👤 Mon Profil</h1>
+
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <ul class="flash-messages">
+        {% for msg in messages %}
+          <li>{{ msg }}</li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+  {% endwith %}
+
+  <form method="POST">
+    <label>Nom d’utilisateur</label>
+    <input type="text" value="{{ user.username }}" disabled>
+
+    <label>Prénom</label>
+    <input type="text" name="first_name" value="{{ user.first_name or '' }}">
+
+    <label>Nom</label>
+    <input type="text" name="last_name" value="{{ user.last_name or '' }}">
+
+    <label>Email</label>
+    <input type="email" name="email" value="{{ user.email or '' }}">
+
+    <label>Téléphone</label>
+    <input type="text" name="phone" value="{{ user.phone or '' }}">
+
+    <button type="submit">💾 Sauvegarder</button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,120 @@
+/* 🌙 Même style global que le login */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #2d89ef, #00b294);
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ✨ Animation d'apparition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🧱 Conteneur principal */
+.container {
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  width: 380px;
+  text-align: center;
+  animation: fadeIn 0.8s ease;
+}
+
+h1 {
+  margin-bottom: 20px;
+  color: #2d89ef;
+}
+
+/* Formulaire */
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+label {
+  text-align: left;
+  font-weight: bold;
+  font-size: 14px;
+  color: white;
+}
+
+input {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+input:focus {
+  border-color: #2d89ef;
+  box-shadow: 0 0 5px rgba(45, 137, 239, 0.5);
+  outline: none;
+}
+
+/* Bouton Sauvegarder */
+button {
+  padding: 10px;
+  background-color: #2d89ef;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #1b6fd1;
+}
+
+/* Bouton Retour */
+.btn-back {
+  display: block;
+  margin-top: 10px;
+  text-decoration: none;
+  color: #2d89ef;
+  font-weight: bold;
+}
+
+.btn-back:hover {
+  text-decoration: underline;
+}
+
+/* Flash messages */
+.flash-messages {
+  list-style: none;
+  padding: 10px;
+  margin-bottom: 15px;
+  color: #d8000c;
+  background-color: #ffd2d2;
+  border-radius: 6px;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+nav a:hover, nav a.active {
+  color: #2d89ef;
+  border-bottom: 2px solid #2d89ef;
+  padding-bottom: 3px;
+}
+
+.logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2d89ef;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}

@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}Créer une VM - VMaster{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='create.css') }}">
+
+<div class="create-container">
+  <!-- Partie gauche : Texte explicatif -->
+  <div class="info-section">
+    <h1>🖥️ Créer une Machine Virtuelle</h1>
+    <p>
+      Configurez votre machine virtuelle selon vos besoins avec VMaster. 
+      Choisissez le système d'exploitation, la puissance de calcul, la mémoire, 
+      l'espace disque et, si besoin, ajoutez un script pour l'automatisation.
+    </p>
+    
+    <div class="system-requirements">
+      <h3>📋 Configuration recommandée :</h3>
+      <ul>
+        <li><strong>Ubuntu/Debian :</strong> 2+ CPU, 2+ Go RAM, 20+ Go stockage</li>
+        <li><strong>CentOS :</strong> 2+ CPU, 2+ Go RAM, 20+ Go stockage</li>
+        <li><strong>Windows :</strong> 2+ CPU, 4+ Go RAM, 40+ Go stockage</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <!-- Partie droite : Formulaire -->
+  <div class="form-section">
+    <form action="/create" method="POST">
+      
+      <label for="name">🖥️ Nom de la VM</label>
+      <input type="text" id="name" name="name" placeholder="Ex : VM-Ubuntu-Server" 
+             pattern="[a-zA-Z0-9-_ ]+" title="Lettres, chiffres, espaces, tirets et underscores uniquement"
+             required>
+      
+      <!-- Choix OS étendu -->
+      <label for="os">🧬 Système d'exploitation</label>
+      <select id="os" name="os" required>
+        <option value="" disabled selected>-- Sélectionnez un OS --</option>
+        <optgroup label="Distributions Linux">
+          <option value="ubuntu">Ubuntu 22.04</option>
+          <option value="debian">Debian 12</option>
+          <option value="centos">CentOS 8</option>
+          <option value="fedora">Fedora</option>
+          <option value="archlinux">Arch Linux</option>
+          <option value="opensuse">openSUSE</option>
+          <option value="gentoo">Gentoo</option>
+          <option value="linux">Autre Linux</option>
+        </optgroup>
+        <optgroup label="Systèmes Windows">
+          <option value="windows">Windows Server 2019</option>
+          <option value="windows10">Windows 10</option>
+          <option value="windows11">Windows 11</option>
+        </optgroup>
+        <optgroup label="Autres systèmes">
+          <option value="freebsd">FreeBSD</option>
+          <option value="solaris">Solaris</option>
+          <option value="oracle">Oracle Linux</option>
+        </optgroup>
+      </select>
+
+      <!-- CPU avec meilleure validation -->
+      <label for="cpu">⚙️ Nombre de CPU (1-32)</label>
+      <input type="number" id="cpu" name="cpu" min="1" max="32" 
+             value="2" required placeholder="Ex : 2">
+      <div class="range-indicator">
+        <span>Faible</span>
+        <input type="range" min="1" max="32" value="2" class="cpu-range" 
+               oninput="document.getElementById('cpu').value = this.value">
+        <span>Élevé</span>
+      </div>
+
+      <!-- RAM avec indicateur visuel -->
+      <label for="ram">💾 Mémoire RAM (1-128 Go)</label>
+      <input type="number" id="ram" name="ram" min="1" max="128" 
+             value="4" required placeholder="Ex : 4">
+      <div class="range-indicator">
+        <span>1 Go</span>
+        <input type="range" min="1" max="128" value="4" class="ram-range"
+               oninput="document.getElementById('ram').value = this.value">
+        <span>128 Go</span>
+      </div>
+
+      <!-- Stockage avec indicateur visuel -->
+      <label for="storage">📦 Stockage (10-1000 Go)</label>
+      <input type="number" id="storage" name="storage" min="10" max="1000" 
+             value="50" required placeholder="Ex : 50">
+      <div class="range-indicator">
+        <span>10 Go</span>
+        <input type="range" min="10" max="1000" value="50" class="storage-range"
+               oninput="document.getElementById('storage').value = this.value">
+        <span>1000 Go</span>
+      </div>
+
+      <!-- Script optionnel amélioré -->
+      <label for="script">📜 Script de post-installation (optionnel)</label>
+      <textarea id="script" name="script" rows="5" placeholder="#!/bin/bash
+# Exemple : Mise à jour automatique
+sudo apt update && sudo apt upgrade -y
+
+# Exemple : Installation de paquets
+# sudo apt install -y nginx mysql-server
+
+# Exemple : Configuration réseau
+# echo 'Hello from VMaster!' > /var/www/html/index.html"></textarea>
+      <small class="help-text">Ce script sera exécuté après l'installation du système</small>
+
+      <!-- Options avancées -->
+      <div class="advanced-options">
+        <h4>⚙️ Options avancées</h4>
+        
+        <label for="network_type">🌐 Type de réseau</label>
+        <select id="network_type" name="network_type">
+          <option value="nat" selected>NAT (recommandé)</option>
+          <option value="bridged">Bridge</option>
+          <option value="hostonly">hostonly</option>
+        </select>
+
+        <label for="graphics_controller">🎮 Contrôleur graphique</label>
+        <select id="graphics_controller" name="graphics_controller">
+          <option value="vmsvga" selected>VMSVGA (recommandé)</option>
+          <option value="vboxsvga">VBoxSVGA</option>
+          <option value="vboxvga">VBoxVGA</option>
+        </select>
+
+        <label for="vram">🎥 Mémoire vidéo (MB)</label>
+        <input type="number" id="vram" name="vram" min="16" max="256" value="128">
+      </div>
+
+      <!-- Conteneur pour les boutons -->
+      <div class="button-container">
+        <button type="submit" class="btn-create">🚀 Créer la VM</button>
+        <button type="reset" class="btn-reset">🔄 Annuler</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// Mise à jour des sliders lorsque les inputs numériques changent
+document.getElementById('cpu').addEventListener('input', function() {
+  document.querySelector('.cpu-range').value = this.value;
+});
+
+document.getElementById('ram').addEventListener('input', function() {
+  document.querySelector('.ram-range').value = this.value;
+});
+
+document.getElementById('storage').addEventListener('input', function() {
+  document.querySelector('.storage-range').value = this.value;
+});
+
+// Validation du nom de la VM
+document.getElementById('name').addEventListener('input', function() {
+  const regex = /^[a-zA-Z0-9-_ ]+$/;
+  if (!regex.test(this.value)) {
+    this.setCustomValidity('Caractères autorisés : lettres, chiffres, espaces, tirets et underscores');
+  } else {
+    this.setCustomValidity('');
+  }
+});
+
+// Affichage des recommandations selon l'OS sélectionné
+document.getElementById('os').addEventListener('change', function() {
+  const os = this.value;
+  const cpuInput = document.getElementById('cpu');
+  const ramInput = document.getElementById('ram');
+  const storageInput = document.getElementById('storage');
+  
+  switch(os) {
+    case 'ubuntu':
+    case 'debian':
+    case 'centos':
+    case 'fedora':
+    case 'archlinux':
+    case 'opensuse':
+    case 'gentoo':
+    case 'linux':
+      cpuInput.value = 2;
+      ramInput.value = 2;
+      storageInput.value = 20;
+      break;
+    case 'windows':
+    case 'windows10':
+    case 'windows11':
+      cpuInput.value = 2;
+      ramInput.value = 4;
+      storageInput.value = 40;
+      break;
+    case 'freebsd':
+    case 'solaris':
+    case 'oracle':
+      cpuInput.value = 2;
+      ramInput.value = 2;
+      storageInput.value = 25;
+      break;
+  }
+});
+</script>
+{% endblock %}

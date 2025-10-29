@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block title %}Tableau de Bord - VMaster{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<div class="dashboard-container">
+  <main>
+    <h1>Bienvenue, {{ session['username'] }} 👋</h1>
+    <p>Gérez vos machines virtuelles facilement avec VMaster.</p>
+
+    <div class="card-container">
+      <div class="card">
+        <h3>Créer une nouvelle VM</h3>
+        <p>Choisissez le système, la mémoire et le stockage pour démarrer une nouvelle machine virtuelle.</p>
+        <a href="/create" class="btn">+ Nouvelle VM</a>
+      </div>
+
+      <div class="card">
+        <h3>Mes machines</h3>
+        <p>Listez, démarrez ou supprimez vos machines virtuelles existantes.</p>
+        <a href="/vms" class="btn">Voir mes VMs</a>
+      </div>
+
+      <div class="card">
+        <h3>Profil</h3>
+        <p>Consultez vos informations de compte et modifiez votre mot de passe.</p>
+        <a href="/profile" class="btn">Mon profil</a>
+      </div>
+    </div>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,138 @@
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #141e30, #243b55);
+  color: #fff;
+  display: flex;
+  height: 100vh;
+}
+
+.login-page {
+  display: flex;
+  width: 100%;
+}
+
+/* --- Partie gauche --- */
+.left-panel {
+  flex: 1;
+  padding: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.app-title {
+  font-size: 3rem;
+  color: #00d4ff;
+  margin-bottom: 10px;
+}
+
+.left-panel h2 {
+  font-weight: 500;
+  margin-bottom: 20px;
+}
+
+.description {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  margin-bottom: 15px;
+  color: #ddd;
+}
+
+/* --- Partie droite --- */
+.right-panel {
+  flex: 1;
+  background-color: #ffffff10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-container {
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 40px 50px;
+  border-radius: 15px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  width: 80%;
+  max-width: 380px;
+  text-align: center;
+}
+
+.form-container h2 {
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: none;
+  border-radius: 8px;
+  background: #ffffff20;
+  color: #fff;
+}
+
+input::placeholder {
+  color: #ccc;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background-color: #00d4ff;
+  color: #141e30;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #00a0cc;
+}
+
+.flash-messages {
+  list-style: none;
+  padding: 0;
+  margin: 10px 0;
+}
+
+.flash-messages li {
+  background-color: #ff5050;
+  padding: 8px;
+  border-radius: 5px;
+}
+
+.register-text {
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.register-text a {
+  color: #00d4ff;
+  text-decoration: none;
+}
+
+.register-text a:hover {
+  text-decoration: underline;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  .login-page {
+    flex-direction: column;
+  }
+
+  .left-panel {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .right-panel {
+    padding: 30px;
+  }
+}

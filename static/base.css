@@ -1,0 +1,109 @@
+/* 🌙 Style global */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  min-height: 100vh;
+  margin: 0;
+  padding-top: 70px; /* ✅ ESPACE DE SÉCURITÉ SOUS LA NAVBAR */
+  display: flex;
+  flex-direction: column;
+}
+
+/* ✨ Animation d'apparition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 🌐 NAVBAR GLOBALE */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(20, 20, 20, 0.55); /* Légèrement plus sombre, meilleur contraste */
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* 🚀 Logo */
+.navbar .logo a {
+  font-size: 26px;
+  font-weight: 700;
+  color: #00b4d8;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+/* 🔗 Liens */
+.navbar nav {
+  display: flex;
+  gap: 25px;
+}
+
+.navbar nav a {
+  text-decoration: none;
+  color: #f1f1f1;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* ✅ Lien actif */
+.navbar nav a.active {
+  background: #00b4d8;
+  color: white;
+  box-shadow: 0px 2px 6px rgba(0, 180, 216, 0.4);
+}
+
+/* 🎯 Survol */
+.navbar nav a:hover {
+  background-color: rgba(0, 180, 216, 0.15);
+  color: #00b4d8;
+}
+
+/* ❌ Bouton déconnexion */
+.navbar nav .logout {
+  color: #ff6b6b;
+}
+
+.navbar nav .logout:hover {
+  background: #ff6b6b;
+  color: white;
+}
+
+/* --- Main content --- */
+main {
+  flex: 1;
+  padding: 60px 20px;
+  color: #fff;
+  animation: fadeIn 0.8s ease;
+}
+
+/* 📱 Responsive Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    gap: 8px;
+  }
+
+  .navbar nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  body {
+    padding-top: 100px; /* Plus d'espace pour la navbar empilée */
+  }
+}

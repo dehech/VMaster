@@ -1,0 +1,290 @@
+/* 🌙 Style global */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #2d89ef, #00b294);
+  height: 100vh;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 🧱 Conteneur principal */
+.container {
+  background: white;
+  padding: 40px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+  width: 350px;
+  text-align: center;
+  animation: fadeIn 0.8s ease;
+}
+
+/* ✨ Animation d'apparition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1, h2 {
+  margin-bottom: 20px;
+  color: #333;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+input, select {
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  transition: all 0.3s;
+}
+
+input:focus, select:focus {
+  border-color: #2d89ef;
+  box-shadow: 0 0 5px rgba(45, 137, 239, 0.5);
+  outline: none;
+}
+
+button {
+  padding: 10px;
+  background-color: #2d89ef;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+button:hover {
+  background-color: #1b6fd1;
+}
+
+p {
+  margin-top: 10px;
+}
+
+a {
+  color: #2d89ef;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* ⚠️ Messages flash */
+.flash-messages {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 15px 0;
+  color: #d8000c;
+  background-color: #ffd2d2;
+  border-radius: 6px;
+  padding: 10px;
+}
+
+/* === Tableau de bord VMaster === */
+
+.dashboard-container {
+  min-height: auto;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  animation: fadeIn 0.8s ease; /* Animation ajoutée ici */
+}
+
+/* --- Header --- */
+header {
+  background: rgba(0, 0, 0, 0.4);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 40px;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  color: #00b4d8;
+}
+
+nav a {
+  margin: 0 15px;
+  text-decoration: none;
+  color: #eee;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+nav a:hover {
+  color: #00b4d8;
+}
+
+.logout {
+  color: #ff6666;
+}
+
+/* --- Main content --- */
+main {
+  flex: 1;
+  text-align: center;
+  padding: 60px 20px;
+}
+
+main h1 {
+  font-size: 32px;
+  color: #00b4d8;
+}
+
+main p {
+  font-size: 18px;
+  margin-bottom: 40px;
+}
+
+/* --- Cards --- */
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 25px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 25px;
+  border-radius: 12px;
+  width: 280px;
+  text-align: left;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  transition: transform 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.card h3 {
+  color: #00b4d8;
+  margin-bottom: 10px;
+}
+
+.card p {
+  font-size: 14px;
+  margin-bottom: 15px;
+  color: #ccc;
+}
+
+.btn {
+  display: inline-block;
+  background-color: #00b4d8;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s;
+}
+
+.btn:hover {
+  background-color: #0096c7;
+}
+
+/* 🌐 NAVBAR GLOBALE */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 12px 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(20, 20, 20, 0.55);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  z-index: 1000;
+  box-sizing: border-box;
+}
+
+/* 🚀 Logo */
+.navbar .logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2d89ef;
+ /*text-transform: uppercase;*/
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+/* 🔗 Liens */
+.navbar nav {
+  display: flex;
+  gap: 25px;
+}
+
+.navbar nav a {
+  text-decoration: none;
+  color: #f1f1f1;
+  font-weight: 500;
+  padding: 8px 16px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+/* ✅ Lien actif */
+.navbar nav a.active {
+  background: #00b4d8;
+  color: white;
+  box-shadow: 0px 2px 6px rgba(0, 180, 216, 0.4);
+}
+
+/* 🎯 Survol */
+.navbar nav a:hover {
+  background-color: rgba(0, 180, 216, 0.15);
+  color: #00b4d8;
+}
+
+/* ❌ Bouton déconnexion */
+.navbar nav .logout {
+  color: #ff6b6b;
+}
+
+.navbar nav .logout:hover {
+  background: #ff6b6b;
+  color: white;
+}
+
+/* Ajustement pour le contenu sous la navbar fixe */
+.dashboard-container {
+  padding-top: 10px;
+}
+
+/* 📱 Responsive Mobile */
+@media (max-width: 768px) {
+  .navbar {
+    flex-direction: column;
+    align-items: center;
+    padding: 12px 20px;
+    gap: 8px;
+  }
+
+  .navbar nav {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+  }
+  
+  .dashboard-container {
+    padding-top: 100px;
+  }
+}

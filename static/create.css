@@ -1,0 +1,286 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #2d89ef, #00b294);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+.create-container {
+  display: flex;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  width: 80%;
+  max-width: 1200px;
+  border-radius: 10px;
+  box-shadow: 0px 5px 15px rgba(0,0,0,0.1);
+  overflow: hidden;
+  margin: 20px auto;
+}
+
+.logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2d89ef;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+.info-section {
+  flex: 1;
+  padding: 30px;
+  background: #1e1e2f;
+  color: white;
+}
+
+.info-section h1 {
+  margin-bottom: 15px;
+  color: #00b4d8;
+}
+
+.form-section {
+  flex: 1.2;
+  padding: 30px;
+  color: white;
+}
+
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+  color: #f1f1f1;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  box-sizing: border-box;
+  background: white;
+}
+
+textarea {
+  resize: vertical;
+  font-family: monospace;
+}
+/*
+.btn-create {
+  background: #00b4d8;
+  color: white;
+  padding: 12px;
+  border: none;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 48%;
+  margin-right: 4%;
+  transition: background 0.3s;
+}
+
+.btn-reset {
+  background: #6c757d;
+  color: white;
+  padding: 12px;
+  border: none;
+  margin-top: 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 48%;
+  transition: background 0.3s;
+}
+
+.btn-create:hover {
+  background: #0096c7;
+}
+
+.btn-reset:hover {
+  background: #5a6268;
+}
+*/
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 8%;
+  margin-top: 20px;
+  width: 100%;
+}
+
+.btn-create {
+  background: #00b4d8;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 48%;
+  transition: background 0.3s;
+}
+
+.btn-reset {
+  background: #6c757d;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  width: 48%;
+  transition: background 0.3s;
+}
+
+.btn-create:hover {
+  background: #0096c7;
+}
+
+.btn-reset:hover {
+  background: #5a6268;
+}
+/* 📱 Responsive Mobile */
+@media (max-width: 768px) {
+  .create-container {
+    flex-direction: column;
+    width: 95%;
+    margin: 10px;
+  }
+  
+  .btn-create, .btn-reset {
+    width: 100%;
+    margin-right: 0;
+  }
+  
+  .info-section, .form-section {
+    padding: 20px;
+  }
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+nav a:hover, nav a.active {
+  color: #2d89ef;
+  border-bottom: 2px solid #2d89ef;
+  padding-bottom: 3px;
+}
+
+/* Styles pour les nouvelles fonctionnalités */
+.system-requirements {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  border-left: 4px solid #00b4d8;
+}
+
+.system-requirements h3 {
+  color: #00b4d8;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.system-requirements ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.system-requirements li {
+  margin-bottom: 5px;
+  font-size: 14px;
+  color: #ccc;
+}
+
+.range-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.range-indicator span {
+  font-size: 12px;
+  color: #999;
+}
+
+.range-indicator input[type="range"] {
+  flex: 1;
+  height: 5px;
+  background: #444;
+  border-radius: 5px;
+  outline: none;
+}
+
+.help-text {
+  display: block;
+  font-size: 12px;
+  color: #999;
+  margin-top: 5px;
+  margin-bottom: 15px;
+}
+
+.advanced-options {
+  margin-top: 20px;
+  padding: 15px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.advanced-options h4 {
+  color: #00b4d8;
+  margin-bottom: 15px;
+  font-size: 16px;
+}
+
+.advanced-options label {
+  margin-top: 10px;
+}
+
+/* Styles pour les groupes d'options */
+optgroup {
+  font-weight: bold;
+  color: #00b4d8;
+}
+
+optgroup option {
+  font-weight: normal;
+  color: white;
+  padding-left: 10px;
+}
+
+/* Validation visuelle */
+input:valid {
+  border-color: #28a745;
+}
+
+input:invalid {
+  border-color: #dc3545;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .range-indicator {
+    flex-direction: column;
+    gap: 5px;
+  }
+  
+  .range-indicator span {
+    font-size: 11px;
+  }
+  
+  .system-requirements {
+    padding: 10px;
+  }
+  
+  .advanced-options {
+    padding: 10px;
+  }
+}

@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+
+{% block title %}{{ vm.name }} - Détails - VMaster{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{{ url_for('static', filename='vm_details.css') }}">
+<!-- Ajout des styles et scripts pour le terminal -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css">
+<script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+
+<div class="vm-details-container">
+    <div class="vm-header">
+        <h1>🖥️ {{ vm.name }}</h1>
+        <div class="vm-status">
+            {% if vm.status == 'running' %}
+                <span class="status running">🟢 En cours d'exécution</span>
+            {% elif vm.status == 'stopped' %}
+                <span class="status stopped">🔴 Arrêtée</span>
+            {% elif vm.status == 'creating' %}
+                <span class="status creating">⚙️ En cours de création</span>
+            {% else %}
+                <span class="status">{{ vm.status }}</span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Navigation par onglets -->
+    <div class="tab-navigation">
+        <button class="tab-btn active" onclick="openTab('details', event)">📊 Détails</button>
+        <button class="tab-btn" onclick="openTab('console', event)">🖥️ Console</button>
+        <button class="tab-btn" onclick="openTab('metrics', event)">📈 Métriques</button>
+    </div>
+
+    <!-- Onglet Détails -->
+    <div id="details" class="tab-content active">
+        <div class="details-grid">
+            <div class="detail-card">
+                <h3>🧬 Configuration Système</h3>
+                <div class="detail-item">
+                    <strong>Système d'exploitation:</strong>
+                    <span>{{ vm.os }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Processeurs:</strong>
+                    <span>{{ vm.cpu }} CPU</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Mémoire RAM:</strong>
+                    <span>{{ vm.ram }} Go</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Stockage:</strong>
+                    <span>{{ vm.storage }} Go</span>
+                </div>
+            </div>
+
+            <div class="detail-card">
+                <h3>⚙️ Configuration Avancée</h3>
+                <div class="detail-item">
+                    <strong>Type de réseau:</strong>
+                    <span>{{ vm.network_type|default('nat') }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Contrôleur graphique:</strong>
+                    <span>{{ vm.graphics_controller|default('vmsvga') }}</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Mémoire vidéo:</strong>
+                    <span>{{ vm.vram|default(128) }} MB</span>
+                </div>
+                <div class="detail-item">
+                    <strong>Créée le:</strong>
+                    <span>{{ vm.created_at.strftime('%d/%m/%Y à %H:%M') }}</span>
+                </div>
+            </div>
+
+            {% if vm.script %}
+            <div class="detail-card full-width">
+                <h3>📜 Script de Configuration</h3>
+                <pre class="script-content">{{ vm.script }}</pre>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Onglet Console POUR SSH -->
+    <div id="console" class="tab-content">
+        <div class="console-container">
+            {% if vm.status == 'running' %}
+            <div class="console-frame">
+                <div class="console-header">
+                    <h3>🖥️ Terminal Web - {{ vm.name }}</h3>
+                    <div class="console-controls">
+                        <span id="terminal-status">🔴 Déconnecté</span>
+                        <button class="btn-console" onclick="connectTerminal()" title="Se connecter">
+                            🔗 Connecter SSH
+                        </button>
+                        <button class="btn-console" onclick="testSSHConnection()" title="Tester la connexion">
+                            🧪 Tester SSH
+                        </button>
+                        <button class="btn-console" onclick="disconnectTerminal()" title="Déconnecter">
+                            🔌 Déconnecter
+                        </button>
+                        <button class="btn-console" onclick="clearTerminal()" title="Effacer">
+                            🧹 Effacer
+                        </button>
+                        <button class="btn-console" onclick="toggleFullscreen()" title="Plein écran">
+                            ⛶ Plein écran
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Terminal Web -->
+                <div id="terminal-container" style="width: 100%; height: 500px; background: #000; border-radius: 4px; padding: 10px;">
+                    <div id="terminal"></div>
+                </div>
+
+                <!-- Informations de connexion dynamiques -->
+                <div id="ssh-info-container" class="ssh-info" style="padding: 15px; background: #f5f5f5; border-radius: 8px; margin-top: 10px;">
+                    <h4>🔗 Informations de connexion :</h4>
+                    <div id="ssh-loading" style="text-align: center;">
+                        <p>Chargement des informations SSH...</p>
+                    </div>
+                    <div id="ssh-details" style="display: none;">
+                        <p><strong>OS :</strong> <span id="ssh-os"></span></p>
+                        <p><strong>Utilisateur :</strong> <span id="ssh-username"></span></p>
+                        <p><strong>Mot de passe :</strong> <span id="ssh-password">123456</span></p>
+                        <p><strong>Adresse SSH :</strong> <span id="ssh-host"></span>:<span id="ssh-port"></span></p>
+                        <p><strong>IP VM :</strong> <span id="ssh-vm-ip"></span></p>
+                        <p><strong>Commande :</strong> <code id="ssh-command">ssh utilisateur@127.0.0.1 -p 2222</code></p>
+                        <div class="terminal-controls" style="margin-top: 10px;">
+                            <button class="btn-console" onclick="copySSHCommand()" title="Copier la commande">
+                                📋 Copier la commande
+                            </button>
+                            <button class="btn-console" onclick="refreshSSHInfo()" title="Actualiser">
+                                🔄 Actualiser
+                            </button>
+                        </div>
+                    </div>
+                    <div id="ssh-error" style="display: none; color: red;">
+                        <p>❌ Impossible de charger les informations SSH</p>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+            <div class="console-offline">
+                <h3>⏸️ VM Non Démarrée</h3>
+                <p>La VM doit être en cours d'exécution pour accéder au terminal SSH.</p>
+                <form method="POST" action="/vms/{{ vm.id }}/start">
+                    <button type="submit" class="btn-start">🚀 Démarrer la VM</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Onglet Métriques -->
+    <div id="metrics" class="tab-content">
+        <div class="metrics-container">
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <h3>💻 Utilisation CPU</h3>
+                    <div class="metric-value">--%</div>
+                    <div class="metric-graph">
+                        <div class="graph-placeholder">Graphique CPU</div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <h3>💾 Utilisation RAM</h3>
+                    <div class="metric-value">--%</div>
+                    <div class="metric-graph">
+                        <div class="graph-placeholder">Graphique RAM</div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <h3>📦 Utilisation Disque</h3>
+                    <div class="metric-value">--%</div>
+                    <div class="metric-graph">
+                        <div class="graph-placeholder">Graphique Disque</div>
+                    </div>
+                </div>
+
+                <div class="metric-card">
+                    <h3>🌐 Activité Réseau</h3>
+                    <div class="metric-value">-- MB/s</div>
+                    <div class="metric-graph">
+                        <div class="graph-placeholder">Graphique Réseau</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="metrics-actions">
+                <button class="btn-refresh" onclick="refreshMetrics()">
+                    🔄 Actualiser les Métriques
+                </button>
+                <button class="btn-export" onclick="exportMetrics()">
+                    📊 Exporter les Données
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Actions Rapides -->
+    <div class="quick-actions">
+        <h3>⚡ Actions Rapides</h3>
+        <div class="action-buttons">
+            <form method="POST" action="/vms/{{ vm.id }}/start">
+                <button type="submit" class="btn-start">🚀 Démarrer</button>
+            </form>
+            <form method="POST" action="/vms/{{ vm.id }}/stop">
+                <button type="submit" class="btn-stop">🛑 Arrêter</button>
+            </form>
+            <form method="POST" action="/vms/{{ vm.id }}/delete">
+                <button type="submit" class="btn-delete" onclick="return confirm('Supprimer définitivement cette VM ?')">
+                    🗑️ Supprimer
+                </button>
+            </form>
+            <a href="/vms" class="btn-back">← Retour à la liste</a>
+        </div>
+    </div>
+</div>
+
+<script>
+// Variables globales
+const vmId = {{ vm.id }};
+let terminal;
+let fitAddon;
+let isTerminalConnected = false;
+let ws = null;
+let sshInfo = null;
+
+// Gestion des onglets
+function openTab(tabName, event) {
+    // Masquer tous les onglets
+    const tabContents = document.getElementsByClassName('tab-content');
+    for (let tab of tabContents) {
+        tab.classList.remove('active');
+    }
+
+    // Désactiver tous les boutons
+    const tabButtons = document.getElementsByClassName('tab-btn');
+    for (let button of tabButtons) {
+        button.classList.remove('active');
+    }
+
+    // Activer l'onglet sélectionné
+    document.getElementById(tabName).classList.add('active');
+    event.currentTarget.classList.add('active');
+
+    // Si l'onglet console est ouvert, initialiser le terminal et charger les infos SSH
+    if (tabName === 'console') {
+        setTimeout(initTerminal, 100);
+        loadSSHInfo();
+    }
+}
+
+// ✅ CHARGER LES INFORMATIONS SSH DEPUIS L'API
+async function loadSSHInfo() {
+    const loading = document.getElementById('ssh-loading');
+    const details = document.getElementById('ssh-details');
+    const error = document.getElementById('ssh-error');
+    
+    loading.style.display = 'block';
+    details.style.display = 'none';
+    error.style.display = 'none';
+
+    try {
+        const response = await fetch(`/api/vms/${vmId}/ssh-info`);
+        const data = await response.json();
+        
+        if (data.success) {
+            sshInfo = data;
+            updateSSHDisplay(data);
+            loading.style.display = 'none';
+            details.style.display = 'block';
+        } else {
+            throw new Error(data.message || 'Erreur inconnue');
+        }
+    } catch (error) {
+        console.error('Erreur chargement SSH:', error);
+        loading.style.display = 'none';
+        error.style.display = 'block';
+        error.innerHTML = `<p>❌ Erreur: ${error.message}</p>`;
+    }
+}
+
+// ✅ METTRE À JOUR L'AFFICHAGE DES INFORMATIONS SSH
+function updateSSHDisplay(data) {
+    document.getElementById('ssh-os').textContent = data.os;
+    document.getElementById('ssh-username').textContent = data.username;
+    document.getElementById('ssh-host').textContent = data.host;
+    document.getElementById('ssh-port').textContent = data.port;
+    document.getElementById('ssh-vm-ip').textContent = data.vm_ip;
+    document.getElementById('ssh-command').textContent = data.command;
+}
+
+// ✅ ACTUALISER LES INFORMATIONS SSH
+function refreshSSHInfo() {
+    loadSSHInfo();
+    if (terminal) {
+        terminal.write('\r\n\x1b[36m🔄 Actualisation des informations SSH...\x1b[0m\r\n');
+    }
+}
+
+// ✅ TESTER LA CONNEXION SSH
+async function testSSHConnection() {
+    if (!sshInfo) {
+        alert('❌ Informations SSH non disponibles');
+        return;
+    }
+
+    if (terminal) {
+        terminal.write('\r\n\x1b[33m🧪 Test de connexion SSH en cours...\x1b[0m\r\n');
+    }
+
+    try {
+        const response = await fetch(`/api/vms/${vmId}/test-ssh`);
+        const data = await response.json();
+        
+        if (terminal) {
+            if (data.success) {
+                terminal.write('\r\n\x1b[32m✅ ' + data.message + '\x1b[0m\r\n');
+            } else {
+                terminal.write('\r\n\x1b[31m❌ ' + data.message + '\x1b[0m\r\n');
+            }
+        }
+        
+        // Afficher aussi une alerte
+        if (data.success) {
+            alert('✅ ' + data.message);
+        } else {
+            alert('❌ ' + data.message);
+        }
+    } catch (error) {
+        console.error('Erreur test SSH:', error);
+        if (terminal) {
+            terminal.write('\r\n\x1b[31m❌ Erreur lors du test SSH\x1b[0m\r\n');
+        }
+        alert('❌ Erreur lors du test SSH: ' + error.message);
+    }
+}
+
+// Initialisation du terminal
+function initTerminal() {
+    if (terminal) return;
+
+    try {
+        // Créer le terminal
+        terminal = new Terminal({
+            cursorBlink: true,
+            theme: {
+                background: '#1e1e1e',
+                foreground: '#cccccc',
+                cursor: '#ffffff',
+                selection: '#366b6b'
+            },
+            fontSize: 14,
+            fontFamily: '"Courier New", Courier, monospace',
+            rows: 25,
+            cols: 80
+        });
+
+        // Ajouter l'addon de redimensionnement
+        fitAddon = new FitAddon.FitAddon();
+        terminal.loadAddon(fitAddon);
+
+        // Monter le terminal
+        terminal.open(document.getElementById('terminal'));
+        
+        // Ajuster la taille
+        setTimeout(() => {
+            if (fitAddon) {
+                fitAddon.fit();
+            }
+        }, 100);
+
+        // Gérer l'entrée utilisateur
+        terminal.onData((data) => {
+            if (isTerminalConnected && ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'input', data: data }));
+            } else {
+                // Mode local si pas de WebSocket
+                terminal.write(data);
+            }
+        });
+
+        // Message de bienvenue
+        terminal.write('\x1b[1;32mTerminal Web VMaster\x1b[0m\r\n');
+        terminal.write('\x1b[33mCliquez sur "Connecter SSH" pour démarrer une session\x1b[0m\r\n');
+        terminal.write('$ ');
+
+        // Redimensionnement de la fenêtre
+        window.addEventListener('resize', () => {
+            if (fitAddon) {
+                fitAddon.fit();
+            }
+        });
+
+    } catch (error) {
+        console.error('Erreur initialisation terminal:', error);
+    }
+}
+
+// Connexion WebSocket au terminal
+async function connectTerminal() {
+    if (isTerminalConnected) {
+        terminal.write('\r\n\x1b[33mDéjà connecté\x1b[0m\r\n');
+        return;
+    }
+
+    try {
+        terminal.write('\r\n\x1b[36mConnexion à la VM...\x1b[0m\r\n');
+        updateTerminalStatus('🟡 Connexion...');
+
+        // ✅ UTILISER LES VRAIES INFORMATIONS SSH
+        if (!sshInfo) {
+            await loadSSHInfo();
+        }
+
+        if (sshInfo) {
+            terminal.write(`\r\n\x1b[36mConnexion à ${sshInfo.username}@${sshInfo.host}:${sshInfo.port}\x1b[0m\r\n`);
+            // Ici vous intégrerez la vraie connexion WebSocket/SSH
+            simulateSSHConnectionWithRealInfo();
+        } else {
+            throw new Error('Informations SSH non disponibles');
+        }
+
+    } catch (error) {
+        terminal.write('\r\n\x1b[31mErreur de connexion: ' + error.message + '\x1b[0m\r\n');
+        updateTerminalStatus('🔴 Erreur');
+    }
+}
+
+// Simulation de connexion SSH avec les vraies informations
+function simulateSSHConnectionWithRealInfo() {
+    isTerminalConnected = true;
+    
+    // Simulation de délai de connexion
+    setTimeout(() => {
+        terminal.write('\r\n\x1b[32m✓ Connexion SSH établie\x1b[0m\r\n');
+        terminal.write(`\x1b[34mBienvenue dans ${sshInfo.vm_name} (${sshInfo.os})\x1b[0m\r\n`);
+        terminal.write(`${sshInfo.username}@${sshInfo.vm_name}:~$ `);
+        updateTerminalStatus('🟢 Connecté');
+    }, 1000);
+
+    // Simulation de réception de données
+    setTimeout(() => {
+        if (isTerminalConnected) {
+            terminal.write('\r\n\x1b[33mℹ️  Utilisez les informations SSH ci-dessous pour une vraie connexion\x1b[0m\r\n');
+        }
+    }, 2000);
+}
+
+// Déconnexion
+function disconnectTerminal() {
+    if (ws && ws.readyState === WebSocket.OPEN) {
+        ws.close();
+    }
+    
+    isTerminalConnected = false;
+    ws = null;
+    
+    if (terminal) {
+        terminal.write('\r\n\x1b[31m✗ Déconnecté\x1b[0m\r\n');
+        terminal.write('$ ');
+    }
+    updateTerminalStatus('🔴 Déconnecté');
+}
+
+// Effacer le terminal
+function clearTerminal() {
+    if (terminal) {
+        terminal.clear();
+        terminal.write('\x1b[1;32mTerminal nettoyé\x1b[0m\r\n$ ');
+    }
+}
+
+// Mettre à jour le statut
+function updateTerminalStatus(status) {
+    const statusElement = document.getElementById('terminal-status');
+    if (statusElement) {
+        statusElement.textContent = status;
+    }
+}
+
+// Plein écran
+function toggleFullscreen() {
+    const container = document.getElementById('terminal-container');
+    
+    if (!document.fullscreenElement) {
+        container.requestFullscreen().catch(err => {
+            console.log('Erreur fullscreen:', err);
+        });
+    } else {
+        document.exitFullscreen();
+    }
+}
+
+// Copier la commande SSH
+function copySSHCommand() {
+    if (!sshInfo) {
+        alert('❌ Informations SSH non disponibles');
+        return;
+    }
+
+    const command = sshInfo.command;
+    navigator.clipboard.writeText(command).then(() => {
+        if (terminal) {
+            terminal.write('\r\n\x1b[32m✓ Commande copiée: ' + command + '\x1b[0m\r\n');
+        }
+        alert('✅ Commande SSH copiée !');
+    }).catch(err => {
+        // Fallback
+        const tempInput = document.createElement('input');
+        tempInput.value = command;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        document.execCommand('copy');
+        document.body.removeChild(tempInput);
+        alert('✅ Commande SSH copiée !');
+    });
+}
+
+// Fonctions pour les métriques
+function refreshMetrics() {
+    alert('Actualisation des métriques...');
+}
+
+function exportMetrics() {
+    alert('Export des données métriques...');
+}
+
+// Nettoyage à la fermeture
+window.addEventListener('beforeunload', () => {
+    if (ws) {
+        ws.close();
+    }
+    if (terminal) {
+        terminal.dispose();
+    }
+});
+
+// Initialiser le terminal au chargement si l'onglet console est actif
+document.addEventListener('DOMContentLoaded', function() {
+    const consoleTab = document.getElementById('console');
+    if (consoleTab && consoleTab.classList.contains('active')) {
+        setTimeout(initTerminal, 500);
+        loadSSHInfo();
+    }
+});
+</script>
+
+<style>
+/* Styles supplémentaires pour le terminal */
+#terminal {
+    width: 100%;
+    height: 100%;
+}
+
+.xterm {
+    padding: 10px;
+}
+
+.xterm-screen {
+    border-radius: 4px;
+}
+
+.terminal-controls {
+    margin: 10px 0;
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.connection-status {
+    padding: 10px;
+    background: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+}
+
+.ssh-info {
+    transition: all 0.3s ease;
+}
+
+.btn-console {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.3s;
+}
+
+.btn-console:hover {
+    background: #0056b3;
+}
+
+.btn-console:disabled {
+    background: #6c757d;
+    cursor: not-allowed;
+}
+</style>
+{% endblock %}

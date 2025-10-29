@@ -1,0 +1,135 @@
+/* 🌌 Style global */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #2d89ef, #00b294);
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+}
+
+/* ✨ Animation d'apparition */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dashboard-container {
+  width: 90%;
+  max-width: 1200px;
+  background: rgba(15, 32, 39, 0.95);
+  padding: 50px;
+  padding-top: 5px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  color: white;
+  animation: fadeIn 0.8s ease; /* Animation ajoutée ici */
+}
+
+/* 🔹 Header */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2d89ef;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
+
+nav a {
+  color: white;
+  margin: 0 15px;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+nav a:hover, nav a.active {
+  color: #2d89ef;
+  border-bottom: 2px solid #2d89ef;
+  padding-bottom: 3px;
+}
+
+.logout {
+  color: #ff5b5b;
+}
+
+/* 📋 Tableau */
+.vm-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.vm-table th, .vm-table td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.vm-table th {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #2d89ef;
+}
+
+tr:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* 🛠 Boutons */
+.action-buttons form {
+  display: inline-block;
+}
+
+button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.btn-start { background-color: #28a745; }
+.btn-start:hover { background-color: #218838; }
+
+.btn-stop { background-color: #ffc107; color: black; }
+.btn-stop:hover { background-color: #e0a800; }
+
+.btn-delete { background-color: #dc3545; }
+.btn-delete:hover { background-color: #c82333; }
+
+/* 🟢 Status */
+.status { font-weight: bold; }
+.status.running { color: #28a745; }
+.status.stopped { color: #dc3545; }
+.status.creating { color: #ffc107; }
+
+.no-vm {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 18px;
+  color: #ddd;
+}
+
+.vm-name-link {
+    color: #2d89ef;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.vm-name-link:hover {
+    color: #00b4d8;
+    text-decoration: underline;
+}

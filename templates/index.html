@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Création de VM</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <div class="container">
+    <h1>Créer une machine virtuelle</h1>
+
+    <p><a href="{{ url_for('logout') }}">🚪 Déconnexion</a></p>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul class="flash-messages">
+          {% for msg in messages %}
+            <li>{{ msg }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+
+    <form action="/create_vm" method="POST">
+      <input type="text" name="name" placeholder="Nom de la VM" required>
+
+      <select name="os_type" required>
+        <option value="">-- Choisir l’OS --</option>
+        <option value="Ubuntu_64">Ubuntu 64-bit</option>
+        <option value="Debian_64">Debian 64-bit</option>
+        <option value="Windows10_64">Windows 10 64-bit</option>
+        <option value="Other_64">Autre</option>
+      </select>
+
+      <input type="number" name="memory" placeholder="Mémoire (Mo)" min="512" max="16384" value="2048" required>
+      <input type="number" name="storage" placeholder="Stockage (Mo)" min="10240" value="20480" required>
+
+      <button type="submit">Créer la VM</button>
+    </form>
+  </div>
+</body>
+</html>
