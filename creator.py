@@ -9,7 +9,6 @@ class VirtualBoxVMCreator:
         self.vboxmanage_path = self._find_vboxmanage()
         
     def _find_vboxmanage(self) -> str:
-        """Trouve le chemin de VBoxManage"""
         possible_paths = [
             "C:\\Program Files\\Oracle\\VirtualBox\\VBoxManage.exe"
         ]
@@ -24,7 +23,6 @@ class VirtualBoxVMCreator:
         raise Exception("VBoxManage non trouvé. Assurez-vous que VirtualBox est installé.")
     
     def _get_os_template(self, os_type: str) -> dict:
-        """Retourne les paramètres par défaut selon l'OS"""
         templates = {
             "ubuntu": {"ostype": "Ubuntu_64"},
             "debian": {"ostype": "Debian_64"},
@@ -44,7 +42,6 @@ class VirtualBoxVMCreator:
         return templates.get(os_type.lower(), templates["ubuntu"])
     
     def _run_command(self, command: list) -> bool:
-        """Exécute une commande VBoxManage"""
         try:
             result = subprocess.run(
                 [self.vboxmanage_path] + command,
@@ -60,7 +57,6 @@ class VirtualBoxVMCreator:
             return False
     
     def _vm_exists(self, vm_name: str) -> bool:
-        """Vérifie si une VM existe"""
         try:
             result = subprocess.run(
                 [self.vboxmanage_path, "list", "vms"],
@@ -71,7 +67,6 @@ class VirtualBoxVMCreator:
             return False
 
     def _is_vm_running(self, vm_name: str) -> bool:
-        """Vérifie si une VM est en cours d'exécution"""
         try:
             result = subprocess.run(
                 [self.vboxmanage_path, "list", "runningvms"],
@@ -81,29 +76,20 @@ class VirtualBoxVMCreator:
         except:
             return False
 
-    def _get_vm_id(self, vm_name: str) -> int:
-        """Génère un ID unique basé sur le nom de la VM"""
-        # Simple hash du nom pour générer un ID
-        return abs(hash(vm_name)) % 100 + 10  # ID entre 10 et 109
-
     def create_vm(self, vm_name: str, os_type: str, cpu_count: int, ram_gb: int, 
                   storage_gb: int, iso_path: Optional[str] = None,
                   secondary_network_type: Optional[str] = None, 
                   graphics_controller: Optional[str] = None,
                   vram_mb: Optional[str] = None,
-                  base_ssh_port: Optional[int] = None) -> bool:
+                  vm_db_id: Optional[int] = None) -> bool:
         """
-        Crée une machine virtuelle dans VirtualBox avec:
-        - Interface 1: NAT obligatoire (10.0.2.15)
-        - Interface 2: Réseau secondaire optionnel
-        - Redirection SSH: port_hôte = base_ssh_port + id_vm
+        Crée une machine virtuelle dans VirtualBox
         """
         
         print(f"\n🎯 Création VM: {vm_name}")
         print(f"📋 {os_type}, {cpu_count} CPU, {ram_gb} Go RAM, {storage_gb} Go stockage")
         print(f"⚙️  Config: nat (obligatoire) + {secondary_network_type} (optionnel)")
 
-        # Vérifier si la VM existe déjà
         if self._vm_exists(vm_name):
             error_msg = f"La VM '{vm_name}' existe déjà"
             print(f"⚠️  {error_msg}")
@@ -111,18 +97,22 @@ class VirtualBoxVMCreator:
         
         template = self._get_os_template(os_type)
         
-        # ✅ CONFIGURATION OBLIGATOIRE: NAT pour l'interface 1
         graphics = graphics_controller or "vmsvga"
         vram = vram_mb or "128"
         
-        # Générer l'ID de la VM pour le port SSH
-        vm_id = self._get_vm_id(vm_name)
+        # ✅ CALCUL SIMPLE : Port = 2200 + ID_VM
+        base_ssh_port = 2200
         
-        # ✅ PORT SSH: base_ssh_port + id_vm
-        base_port = base_ssh_port or 2200  # Port de base par défaut
-        ssh_host_port = base_port + vm_id  # Port SSH unique: 2210, 2211, etc.
+        if vm_db_id:
+            # Utiliser l'ID de la base de données
+            ssh_host_port = base_ssh_port + vm_db_id
+            port_source = f"ID base de données ({vm_db_id})"
+        else:
+            # Fallback : calcul simple basé sur le nom
+            simple_id = sum(ord(c) for c in vm_name) % 100 + 10
+            ssh_host_port = base_ssh_port + simple_id
+            port_source = f"calcul du nom ({simple_id})"
         
-        # IP fixe pour NAT (VirtualBox NAT utilise 10.0.2.15 par défaut)
         vm_ip = "10.0.2.15"
         
         try:
@@ -143,23 +133,23 @@ class VirtualBoxVMCreator:
             if not self._run_command(["modifyvm", vm_name, "--cpus", str(cpu_count)]):
                 raise Exception("Échec configuration CPU")
             
-            # ✅ 5. INTERFACE RÉSEAU 1: NAT OBLIGATOIRE
+            # 5. INTERFACE RÉSEAU 1: NAT OBLIGATOIRE
             print(f"\n📡 Configuration interface réseau 1 (NAT obligatoire)")
             if not self._run_command(["modifyvm", vm_name, "--nic1", "nat"]):
                 raise Exception("Échec configuration interface nat")
             
-            # ✅ 6. REDIRECTION PORT SSH POUR NAT (port_hôte = base_port + id_vm)
+            # 6. REDIRECTION PORT SSH
             print(f"🔗 Configuration SSH: 127.0.0.1:{ssh_host_port} → {vm_ip}:22")
+            print(f"   - Source: {port_source}")
             if not self._run_command(["modifyvm", vm_name, "--natpf1", f"ssh,tcp,127.0.0.1,{ssh_host_port},{vm_ip},22"]):
                 print("⚠️  Impossible de configurer la redirection SSH")
             
-            # ✅ 7. INTERFACE RÉSEAU 2: OPTIONNELLE
+            # 7. INTERFACE RÉSEAU 2: OPTIONNELLE
             if secondary_network_type and secondary_network_type != "none":
                 print(f"\n📡 Configuration interface réseau 2 ({secondary_network_type} optionnel)")
                 if not self._run_command(["modifyvm", vm_name, "--nic2", secondary_network_type]):
                     print(f"⚠️  Impossible de configurer l'interface {secondary_network_type}")
                 
-                # Configuration spécifique selon le type de réseau secondaire
                 if secondary_network_type == "bridged":
                     if not self._run_command(["modifyvm", vm_name, "--bridgeadapter2", "en0"]):
                         print("⚠️  Impossible de configurer l'adaptateur bridge")
@@ -213,14 +203,14 @@ class VirtualBoxVMCreator:
             self._run_command(["modifyvm", vm_name, "--vram", str(vram)])
             self._run_command(["modifyvm", vm_name, "--usb", "on", "--usbehci", "on"])
             self._run_command(["modifyvm", vm_name, "--audio", "none"])
-            self._run_command(["modifyvm", vm_name, "--vrde", "off"])  # Désactiver VRDE
+            self._run_command(["modifyvm", vm_name, "--vrde", "off"])
             
             print(f"\n✅ VM '{vm_name}' créée avec succès!")
             print(f"📊 Configuration réseau:")
             print(f"   - Interface 1: NAT (obligatoire)")
-            print(f"   - IP VM: {vm_ip} (10.0.2.15)")
+            print(f"   - IP VM: {vm_ip}")
             print(f"   - SSH: 127.0.0.1:{ssh_host_port} → {vm_ip}:22")
-            print(f"   - ID VM: {vm_id}, Port de base: {base_port}")
+            print(f"   - Port source: {port_source}")
             
             if secondary_network_type and secondary_network_type != "none":
                 print(f"   - Interface 2: {secondary_network_type} (optionnel)")
@@ -239,7 +229,6 @@ class VirtualBoxVMCreator:
             return False
 
     def start_vm(self, vm_name: str) -> bool:
-        """Démarre une VM"""
         print(f"\n🚀 Démarrage de la VM: {vm_name}")
         
         if not self._vm_exists(vm_name):
@@ -248,20 +237,18 @@ class VirtualBoxVMCreator:
             return False
         
         try:
-            # Récupérer l'ID de la VM pour afficher les infos SSH
-            vm_id = self._get_vm_id(vm_name)
-            base_port = 2200  # Port de base par défaut
-            ssh_port = base_port + vm_id
+            # Calcul simple du port pour l'affichage
+            simple_id = sum(ord(c) for c in vm_name) % 100 + 10
+            ssh_port = 2200 + simple_id
             
             if self._run_command(["startvm", vm_name, "--type", "headless"]):
                 print(f"✅ VM '{vm_name}' démarrée!")
                 print(f"📡 Accès SSH: ssh utilisateur@127.0.0.1 -p {ssh_port}")
                 print(f"🌐 IP VM: 10.0.2.15 (NAT)")
-                print(f"🔢 ID VM: {vm_id}, Port calculé: {base_port} + {vm_id} = {ssh_port}")
+                print(f"🔢 Port SSH estimé: {ssh_port}")
                 
-                # Attendre que la VM soit complètement démarrée
                 import time
-                time.sleep(60)  # 1 minute pour le démarrage complet
+                time.sleep(60)
                 
                 return True
             else:
@@ -273,7 +260,6 @@ class VirtualBoxVMCreator:
             return False
 
     def stop_vm(self, vm_name: str) -> bool:
-        """Arrête une VM"""
         print(f"\n🛑 Arrêt de la VM: {vm_name}")
         
         if not self._vm_exists(vm_name):
@@ -282,14 +268,11 @@ class VirtualBoxVMCreator:
             return False
         
         try:
-            # Essayer d'arrêter proprement d'abord
             if self._run_command(["controlvm", vm_name, "acpipowerbutton"]):
                 print("✓ Signal d'arrêt envoyé (ACPI)")
-                # Attendre un peu puis forcer l'arrêt si nécessaire
                 import time
                 time.sleep(10)
                 
-                # Vérifier si la VM est toujours en cours d'exécution
                 if self._is_vm_running(vm_name):
                     print("⚠️  Forçage de l'arrêt...")
                     if self._run_command(["controlvm", vm_name, "poweroff"]):
@@ -304,7 +287,6 @@ class VirtualBoxVMCreator:
             return False
 
     def delete_vm(self, vm_name: str) -> bool:
-        """Supprime une VM"""
         print(f"\n🗑️  Suppression de la VM: {vm_name}")
         
         if not self._vm_exists(vm_name):
@@ -313,16 +295,13 @@ class VirtualBoxVMCreator:
             return False
         
         try:
-            # Arrêter la VM si elle est en cours d'exécution
             if self._is_vm_running(vm_name):
                 print("🛑 Arrêt de la VM en cours...")
                 self._run_command(["controlvm", vm_name, "poweroff"])
                 import time
                 time.sleep(5)
             
-            # Supprimer la VM
             if self._run_command(["unregistervm", vm_name, "--delete"]):
-                # Supprimer aussi le fichier VDI s'il existe
                 vdi_file = f"{vm_name}.vdi"
                 if os.path.exists(vdi_file):
                     os.remove(vdi_file)
@@ -339,26 +318,21 @@ class VirtualBoxVMCreator:
             return False
 
     def get_vm_info(self, vm_name: str):
-        """Affiche les informations d'une VM"""
         print(f"\n📊 Informations de la VM: {vm_name}")
         if self._vm_exists(vm_name):
-            vm_id = self._get_vm_id(vm_name)
-            base_port = 2200
-            ssh_port = base_port + vm_id
+            simple_id = sum(ord(c) for c in vm_name) % 100 + 10
+            ssh_port = 2200 + simple_id
             
             print(f"🔗 Accès réseau:")
             print(f"   - Interface 1: NAT (obligatoire)")
             print(f"   - IP VM: 10.0.2.15")
-            print(f"   - ID VM: {vm_id}")
             print(f"   - SSH: 127.0.0.1:{ssh_port} → 10.0.2.15:22")
-            print(f"   - Calcul: {base_port} + {vm_id} = {ssh_port}")
             
             self._run_command(["showvminfo", vm_name])
         else:
             print(f"❌ La VM '{vm_name}' n'existe pas")
 
     def list_vms(self):
-        """Liste toutes les VMs avec leurs infos réseau"""
         print("\n📋 Liste des VMs:")
         self._run_command(["list", "vms"])
         
@@ -366,14 +340,11 @@ class VirtualBoxVMCreator:
         self._run_command(["list", "runningvms"])
 
     def get_ssh_info(self, vm_name: str):
-        """Affiche uniquement les informations SSH d'une VM"""
         if self._vm_exists(vm_name):
-            vm_id = self._get_vm_id(vm_name)
-            base_port = 2200
-            ssh_port = base_port + vm_id
+            simple_id = sum(ord(c) for c in vm_name) % 100 + 10
+            ssh_port = 2200 + simple_id
             
             print(f"\n🔗 Informations SSH pour '{vm_name}':")
-            print(f"   - ID VM: {vm_id}")
             print(f"   - Port SSH: {ssh_port}")
             print(f"   - Commande: ssh utilisateur@127.0.0.1 -p {ssh_port}")
             print(f"   - IP VM: 10.0.2.15")
@@ -381,7 +352,6 @@ class VirtualBoxVMCreator:
             print(f"❌ La VM '{vm_name}' n'existe pas")
 
 def main():
-    """Point d'entrée principal"""
     try:
         creator = VirtualBoxVMCreator()
     except Exception as e:
@@ -392,7 +362,7 @@ def main():
         action = sys.argv[1]
         
         if action == "create" and len(sys.argv) >= 7:
-            # Format: python vm_creator.py create <name> <os> <cpu> <ram> <storage> [iso] [secondary_network] [graphics] [vram] [base_port]
+            # Format: python creator.py create <name> <os> <cpu> <ram> <storage> [iso] [network] [graphics] [vram] [vm_db_id]
             vm_name = sys.argv[2]
             os_type = sys.argv[3]
             cpu_count = int(sys.argv[4])
@@ -400,14 +370,14 @@ def main():
             storage_gb = int(sys.argv[6])
     
             iso_path = sys.argv[7] if len(sys.argv) > 7 and sys.argv[7] else None
-            secondary_network = sys.argv[8] if len(sys.argv) > 8 and sys.argv[8] != "" else "none"
+            network_type = sys.argv[8] if len(sys.argv) > 8 and sys.argv[8] != "" else "nat"
             graphics_controller = sys.argv[9] if len(sys.argv) > 9 and sys.argv[9] != "" else None
             vram_mb = int(sys.argv[10]) if len(sys.argv) > 10 and sys.argv[10] != "" else None
-            base_ssh_port = int(sys.argv[11]) if len(sys.argv) > 11 and sys.argv[11] != "" else 2200
+            vm_db_id = int(sys.argv[11]) if len(sys.argv) > 11 and sys.argv[11] != "" else None
             
             success = creator.create_vm(
                 vm_name, os_type, cpu_count, ram_gb, storage_gb,
-                iso_path, secondary_network, graphics_controller, vram_mb, base_ssh_port
+                iso_path, network_type, graphics_controller, vram_mb, vm_db_id
             )
             sys.exit(0 if success else 1)
             
@@ -437,22 +407,15 @@ def main():
             
         else:
             print("Usage:")
-            print("  Créer: python vm_creator.py create <name> <os> <cpu> <ram> <storage> [iso] [secondary_network] [graphics] [vram] [base_port]")
-            print("  Démarrer: python vm_creator.py start <vm_name>")
-            print("  Arrêter: python vm_creator.py stop <vm_name>")
-            print("  Supprimer: python vm_creator.py delete <vm_name>")
-            print("  Info: python vm_creator.py info <vm_name>")
-            print("  SSH Info: python vm_creator.py ssh <vm_name>")
-            print("  Lister: python vm_creator.py list")
-            print("\nOptions réseau secondaire:")
-            print("  - bridged: Connexion directe au réseau physique")
-            print("  - hostonly: Réseau privé hôte-VM seulement") 
-            print("  - natnetwork: Réseau NAT partagé")
-            print("  - none: Pas de deuxième interface (défaut)")
+            print("  Créer: python creator.py create <name> <os> <cpu> <ram> <storage> [iso] [network] [graphics] [vram] [vm_db_id]")
+            print("  Démarrer: python creator.py start <vm_name>")
+            print("  Arrêter: python creator.py stop <vm_name>")
+            print("  Supprimer: python creator.py delete <vm_name>")
+            print("  Info: python creator.py info <vm_name>")
+            print("  SSH Info: python creator.py ssh <vm_name>")
+            print("  Lister: python creator.py list")
             print("\nCalcul du port SSH:")
-            print("  - Port SSH = base_port + id_vm")
-            print("  - base_port par défaut: 2200")
-            print("  - id_vm: généré automatiquement (10-109)")
+            print("  - Port SSH = 2200 + ID_VM (depuis la base de données)")
             sys.exit(1)
     else:
         print("VM Creator - Utilisez --help pour voir les commandes disponibles")

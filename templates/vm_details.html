@@ -161,40 +161,62 @@
             <div class="metrics-grid">
                 <div class="metric-card">
                     <h3>💻 Utilisation CPU</h3>
-                    <div class="metric-value">--%</div>
+                    <div class="metric-value" id="cpu-value">--%</div>
                     <div class="metric-graph">
-                        <div class="graph-placeholder">Graphique CPU</div>
+                        <div class="graph-bar">
+                            <div class="graph-fill" id="cpu-bar" style="width: 0%; background: #007bff;"></div>
+                        </div>
                     </div>
+                    <div class="metric-timestamp" id="cpu-timestamp">--</div>
                 </div>
 
                 <div class="metric-card">
                     <h3>💾 Utilisation RAM</h3>
-                    <div class="metric-value">--%</div>
+                    <div class="metric-value" id="ram-value">--%</div>
                     <div class="metric-graph">
-                        <div class="graph-placeholder">Graphique RAM</div>
+                        <div class="graph-bar">
+                            <div class="graph-fill" id="ram-bar" style="width: 0%; background: #28a745;"></div>
+                        </div>
                     </div>
+                    <div class="metric-timestamp" id="ram-timestamp">--</div>
                 </div>
 
                 <div class="metric-card">
                     <h3>📦 Utilisation Disque</h3>
-                    <div class="metric-value">--%</div>
+                    <div class="metric-value" id="disk-value">--%</div>
                     <div class="metric-graph">
-                        <div class="graph-placeholder">Graphique Disque</div>
+                        <div class="graph-bar">
+                            <div class="graph-fill" id="disk-bar" style="width: 0%; background: #ffc107;"></div>
+                        </div>
                     </div>
+                    <div class="metric-timestamp" id="disk-timestamp">--</div>
                 </div>
 
                 <div class="metric-card">
                     <h3>🌐 Activité Réseau</h3>
-                    <div class="metric-value">-- MB/s</div>
+                    <div class="metric-value" id="network-value">-- MB/s</div>
                     <div class="metric-graph">
-                        <div class="graph-placeholder">Graphique Réseau</div>
+                        <div class="graph-bar">
+                            <div class="graph-fill" id="network-bar" style="width: 0%; background: #dc3545;"></div>
+                        </div>
                     </div>
+                    <div class="metric-timestamp" id="network-timestamp">--</div>
+                </div>
+            </div>
+
+            <div class="metrics-status">
+                <div class="status-indicator">
+                    <span id="metrics-status-text">Chargement...</span>
+                    <span id="last-update" class="last-update">Dernière mise à jour: --</span>
                 </div>
             </div>
 
             <div class="metrics-actions">
                 <button class="btn-refresh" onclick="refreshMetrics()">
                     🔄 Actualiser les Métriques
+                </button>
+                <button class="btn-auto-refresh" onclick="toggleAutoRefresh()">
+                    ⏱️ Auto-rafraîchissement: <span id="auto-refresh-status">OFF</span>
                 </button>
                 <button class="btn-export" onclick="exportMetrics()">
                     📊 Exporter les Données
@@ -232,6 +254,11 @@ let isTerminalConnected = false;
 let ws = null;
 let sshInfo = null;
 
+// Variables pour les métriques
+let metricsData = null;
+let autoRefreshInterval = null;
+let isAutoRefresh = false;
+
 // Gestion des onglets
 function openTab(tabName, event) {
     // Masquer tous les onglets
@@ -250,10 +277,12 @@ function openTab(tabName, event) {
     document.getElementById(tabName).classList.add('active');
     event.currentTarget.classList.add('active');
 
-    // Si l'onglet console est ouvert, initialiser le terminal et charger les infos SSH
+    // Charger les données spécifiques à l'onglet
     if (tabName === 'console') {
         setTimeout(initTerminal, 100);
         loadSSHInfo();
+    } else if (tabName === 'metrics') {
+        setTimeout(refreshMetrics, 100);
     }
 }
 
@@ -524,13 +553,113 @@ function copySSHCommand() {
     });
 }
 
-// Fonctions pour les métriques
-function refreshMetrics() {
-    alert('Actualisation des métriques...');
+// ============ FONCTIONS POUR LES MÉTRIQUES ============
+
+// Récupérer les métriques depuis l'API
+async function refreshMetrics() {
+    try {
+        const response = await fetch(`/api/vms/${vmId}/metrics`);
+        const data = await response.json();
+        
+        if (data.success) {
+            metricsData = data.metrics;
+            updateMetricsDisplay(data.metrics, data.timestamp);
+            
+            // Mettre à jour le statut
+            document.getElementById('metrics-status-text').textContent = 
+                metricsData.is_running ? '🟢 VM En cours d\'exécution' : '🔴 VM Arrêtée';
+            document.getElementById('metrics-status-text').className = 
+                metricsData.is_running ? 'status-running' : 'status-stopped';
+                
+        } else {
+            throw new Error(data.message || 'Erreur lors de la récupération des métriques');
+        }
+    } catch (error) {
+        console.error('Erreur métriques:', error);
+        document.getElementById('metrics-status-text').textContent = '❌ Erreur de chargement';
+        document.getElementById('metrics-status-text').className = 'status-error';
+    }
 }
 
+// Mettre à jour l'affichage des métriques
+function updateMetricsDisplay(metrics, timestamp) {
+    // CPU
+    const cpuValue = metrics.cpu_usage || 0;
+    document.getElementById('cpu-value').textContent = `${cpuValue.toFixed(1)}%`;
+    document.getElementById('cpu-bar').style.width = `${cpuValue}%`;
+    
+    // RAM
+    const ramValue = metrics.memory_usage || 0;
+    document.getElementById('ram-value').textContent = `${ramValue.toFixed(1)}%`;
+    document.getElementById('ram-bar').style.width = `${ramValue}%`;
+    
+    // Disque
+    const diskValue = metrics.disk_usage || 0;
+    document.getElementById('disk-value').textContent = `${diskValue.toFixed(1)}%`;
+    document.getElementById('disk-bar').style.width = `${diskValue}%`;
+    
+    // Réseau
+    const networkValue = metrics.network_usage || 0;
+    document.getElementById('network-value').textContent = `${networkValue.toFixed(2)} MB/s`;
+    
+    // Pour le réseau, on utilise une échelle différente (0-10 MB/s pour 100%)
+    const networkPercent = Math.min((networkValue / 10) * 100, 100);
+    document.getElementById('network-bar').style.width = `${networkPercent}%`;
+    
+    // Timestamp
+    const date = new Date(timestamp);
+    const timeString = date.toLocaleTimeString('fr-FR');
+    document.getElementById('last-update').textContent = `Dernière mise à jour: ${timeString}`;
+}
+
+// Activer/désactiver le rafraîchissement automatique
+function toggleAutoRefresh() {
+    isAutoRefresh = !isAutoRefresh;
+    const statusElement = document.getElementById('auto-refresh-status');
+    
+    if (isAutoRefresh) {
+        statusElement.textContent = 'ON';
+        statusElement.className = 'auto-refresh-on';
+        autoRefreshInterval = setInterval(refreshMetrics, 5000); // Toutes les 5 secondes
+        refreshMetrics(); // Rafraîchir immédiatement
+    } else {
+        statusElement.textContent = 'OFF';
+        statusElement.className = 'auto-refresh-off';
+        if (autoRefreshInterval) {
+            clearInterval(autoRefreshInterval);
+            autoRefreshInterval = null;
+        }
+    }
+}
+
+// Exporter les données métriques
 function exportMetrics() {
-    alert('Export des données métriques...');
+    if (!metricsData) {
+        alert('❌ Aucune donnée métrique à exporter');
+        return;
+    }
+    
+    const dataStr = JSON.stringify(metricsData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `vm-${vmId}-metrics-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    
+    alert('✅ Données métriques exportées !');
+}
+
+// Au chargement de la page, vérifier si l'onglet métriques est actif
+function checkAndLoadMetrics() {
+    const metricsTab = document.getElementById('metrics');
+    if (metricsTab && metricsTab.classList.contains('active')) {
+        refreshMetrics();
+    }
 }
 
 // Nettoyage à la fermeture
@@ -541,6 +670,9 @@ window.addEventListener('beforeunload', () => {
     if (terminal) {
         terminal.dispose();
     }
+    if (autoRefreshInterval) {
+        clearInterval(autoRefreshInterval);
+    }
 });
 
 // Initialiser le terminal au chargement si l'onglet console est actif
@@ -550,6 +682,9 @@ document.addEventListener('DOMContentLoaded', function() {
         setTimeout(initTerminal, 500);
         loadSSHInfo();
     }
+    
+    // Vérifier et charger les métriques si l'onglet est actif
+    checkAndLoadMetrics();
 });
 </script>
 
@@ -607,6 +742,127 @@ document.addEventListener('DOMContentLoaded', function() {
 .btn-console:disabled {
     background: #6c757d;
     cursor: not-allowed;
+}
+
+/* Styles pour les métriques */
+.metric-card {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 2rem;
+    font-weight: bold;
+    margin: 10px 0;
+    color: #333;
+}
+
+.metric-graph {
+    margin: 15px 0;
+}
+
+.graph-bar {
+    width: 100%;
+    height: 20px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.graph-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
+}
+
+.metric-timestamp {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.metrics-status {
+    margin: 20px 0;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    text-align: center;
+}
+
+.status-indicator {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-running {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.status-stopped {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.status-error {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+.last-update {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.metrics-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.btn-refresh, .btn-auto-refresh, .btn-export {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-refresh:hover, .btn-auto-refresh:hover, .btn-export:hover {
+    background: #0056b3;
+}
+
+.auto-refresh-on {
+    color: #28a745;
+    font-weight: bold;
+}
+
+.auto-refresh-off {
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .status-indicator {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .metrics-actions {
+        flex-direction: column;
+    }
 }
 </style>
 {% endblock %}

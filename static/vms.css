@@ -1,103 +1,103 @@
 /* 🌌 Style global */
 body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #2d89ef, #00b294);
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2d89ef, #00b294);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
 }
 
 /* ✨ Animation d'apparition */
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .dashboard-container {
-  width: 90%;
-  max-width: 1200px;
-  background: rgba(15, 32, 39, 0.95);
-  padding: 50px;
-  padding-top: 5px;
-  border-radius: 12px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
-  color: white;
-  animation: fadeIn 0.8s ease; /* Animation ajoutée ici */
+    width: 90%;
+    max-width: 1200px;
+    background: rgba(15, 32, 39, 0.95);
+    padding: 50px;
+    padding-top: 5px;
+    border-radius: 12px;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+    color: white;
+    animation: fadeIn 0.8s ease;
 }
 
-/* 🔹 Header */
+/* 🔹 Header (NOTE: Styles de header non fournis ici, mais gardés intacts) */
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
 .logo {
-  font-size: 26px;
-  font-weight: bold;
-  color: #2d89ef;
-  letter-spacing: 1.5px;
-  cursor: pointer;
+    font-size: 26px;
+    font-weight: bold;
+    color: #2d89ef;
+    letter-spacing: 1.5px;
+    cursor: pointer;
 }
 
 nav a {
-  color: white;
-  margin: 0 15px;
-  text-decoration: none;
-  transition: 0.3s;
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
 nav a:hover, nav a.active {
-  color: #2d89ef;
-  border-bottom: 2px solid #2d89ef;
-  padding-bottom: 3px;
+    color: #2d89ef;
+    border-bottom: 2px solid #2d89ef;
+    padding-bottom: 3px;
 }
 
 .logout {
-  color: #ff5b5b;
+    color: #ff5b5b;
 }
 
-/* 📋 Tableau */
+/* 📋 Tableau (Style Bureau Original) */
 .vm-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 20px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  overflow: hidden;
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 .vm-table th, .vm-table td {
-  padding: 12px;
-  text-align: center;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding: 12px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
 }
 
 .vm-table th {
-  background-color: rgba(255, 255, 255, 0.1);
-  color: #2d89ef;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #2d89ef;
 }
 
 tr:hover {
-  background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.05);
 }
 
 /* 🛠 Boutons */
 .action-buttons form {
-  display: inline-block;
+    display: inline-block;
 }
 
 button {
-  padding: 8px 14px;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  color: white;
-  font-size: 14px;
-  transition: 0.3s;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    color: white;
+    font-size: 14px;
+    transition: 0.3s;
 }
 
 .btn-start { background-color: #28a745; }
@@ -116,10 +116,10 @@ button {
 .status.creating { color: #ffc107; }
 
 .no-vm {
-  text-align: center;
-  margin-top: 20px;
-  font-size: 18px;
-  color: #ddd;
+    text-align: center;
+    margin-top: 20px;
+    font-size: 18px;
+    color: #ddd;
 }
 
 .vm-name-link {
@@ -132,4 +132,89 @@ button {
 .vm-name-link:hover {
     color: #00b4d8;
     text-decoration: underline;
+}
+
+/* --- 📱 Media Query pour le Mode Mobile (écrans < 768px) --- */
+@media screen and (max-width: 768px) {
+    /* Ajustement de la largeur du conteneur principal */
+    .dashboard-container {
+        width: 95%; /* Prend plus de place sur les petits écrans */
+        padding: 20px; /* Réduction du padding */
+        margin-left: -11px; /* ← DÉCALAGE VERS LA GAUCHE */
+    }
+    
+    /* 📋 Rendre le tableau responsive (Table-to-Card) */
+    .vm-table {
+        border: 0; /* Supprime la bordure du tableau */
+    }
+
+    /* Masquer les en-têtes du tableau sur mobile */
+    .vm-table thead, .vm-table th {
+        border: none;
+        clip: rect(0 0 0 0);
+        height: 1px;
+        margin: -1px;
+        overflow: hidden;
+        padding: 0;
+        position: absolute;
+        width: 1px;
+    }
+
+    /* Rendre les lignes du tableau affichables comme des blocs ("cartes") */
+    .vm-table tr {
+        display: block;
+        margin-bottom: 1.5em; /* Espace entre les cartes */
+        border-bottom: 4px solid #2d89ef; /* Sépare visuellement les "cartes" de VM */
+        background: rgba(255, 255, 255, 0.05); /* Légère couleur pour la carte */
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+    
+    /* Transformer les cellules en blocs et ajouter les "étiquettes" */
+    .vm-table td {
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: block;
+        text-align: right;
+        padding: 10px 10px 10px 50%; /* Ajout de padding-left pour l'étiquette */
+        position: relative;
+    }
+
+    /* Créer l'étiquette (label) en utilisant l'attribut data-label */
+    .vm-table td::before {
+        content: attr(data-label);
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        width: 45%;
+        padding: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: #00b294; /* Couleur de l'étiquette */
+        background: rgba(255, 255, 255, 0.05); /* Fond pour l'étiquette */
+    }
+    
+    /* Le dernier TD d'une carte ne devrait pas avoir de bordure pour plus de clarté */
+    .vm-table tr:last-child {
+        border-bottom: none;
+    }
+    
+    /* Ajustement des actions */
+    .action-buttons {
+        text-align: center; /* Centrer les boutons d'action */
+        padding-top: 15px;
+        padding-bottom: 15px;
+        border-bottom: none !important; /* Pas de bordure pour le bas de la carte */
+    }
+    
+    /* Mise en ligne des formulaires de boutons */
+    .action-buttons form {
+        margin: 5px;
+    }
+    
+    .action-buttons button {
+        width: auto; /* Permet aux boutons de ne pas prendre toute la largeur */
+        display: inline-block;
+    }
 }

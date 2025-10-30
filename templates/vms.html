@@ -11,45 +11,48 @@
 
         {% if vms %}
         <table class="vm-table">
-            <tr>
-                <th>Nom</th>
-                <th>OS</th>
-                <th>CPU</th>
-                <th>RAM</th>
-                <th>Stockage</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-
-            {% for vm in vms %}
-            <tr>
-                <td><a href="{{ url_for('vm_details', vm_id=vm.id) }}" class="vm-name-link">{{ vm.name }}</a></td>
-                <td>{{ vm.os }}</td>
-                <td>{{ vm.cpu }}</td>
-                <td>{{ vm.ram }} MB</td>
-                <td>{{ vm.storage }} GB</td>
-                <td>
-                    {% if vm.status == 'running' %}
-                        <span class="status running">🟢 Running</span>
-                    {% elif vm.status == 'stopped' %}
-                        <span class="status stopped">🔴 Stopped</span>
-                    {% else %}
-                        <span class="status creating">⚙️ {{ vm.status }}</span>
-                    {% endif %}
-                </td>
-                <td class="action-buttons">
-                    <form method="POST" action="/vms/{{ vm.id }}/start">
-                        <button type="submit" class="btn-start">Start</button>
-                    </form>
-                    <form method="POST" action="/vms/{{ vm.id }}/stop">
-                        <button type="submit" class="btn-stop">Stop</button>
-                    </form>
-                    <form method="POST" action="/vms/{{ vm.id }}/delete">
-                        <button type="submit" class="btn-delete" onclick="return confirm('Supprimer cette VM ?')">Delete</button>
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
+            <thead>
+                <tr>
+                    <th>Nom</th>
+                    <th>OS</th>
+                    <th>CPU</th>
+                    <th>RAM</th>
+                    <th>Stockage</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for vm in vms %}
+                <tr>
+                    <td data-label="Nom"><a href="{{ url_for('vm_details', vm_id=vm.id) }}" class="vm-name-link">{{ vm.name }}</a></td>
+                    <td data-label="OS">{{ vm.os }}</td>
+                    <td data-label="CPU">{{ vm.cpu }}</td>
+                    <td data-label="RAM">{{ vm.ram }} MB</td>
+                    <td data-label="Stockage">{{ vm.storage }} GB</td>
+                    <td data-label="Status">
+                        {% if vm.status == 'running' %}
+                            <span class="status running">🟢 Running</span>
+                        {% elif vm.status == 'stopped' %}
+                            <span class="status stopped">🔴 Stopped</span>
+                        {% else %}
+                            <span class="status creating">⚙️ {{ vm.status }}</span>
+                        {% endif %}
+                    </td>
+                    <td data-label="Actions" class="action-buttons">
+                        <form method="POST" action="/vms/{{ vm.id }}/start">
+                            <button type="submit" class="btn-start">Start</button>
+                        </form>
+                        <form method="POST" action="/vms/{{ vm.id }}/stop">
+                            <button type="submit" class="btn-stop">Stop</button>
+                        </form>
+                        <form method="POST" action="/vms/{{ vm.id }}/delete">
+                            <button type="submit" class="btn-delete" onclick="return confirm('Supprimer cette VM ?')">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
         </table>
         {% else %}
             <p class="no-vm">Aucune machine virtuelle créée pour l’instant.</p>

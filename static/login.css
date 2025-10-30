@@ -1,138 +1,183 @@
 body {
-  margin: 0;
-  font-family: 'Poppins', sans-serif;
-  background: linear-gradient(135deg, #141e30, #243b55);
-  color: #fff;
-  display: flex;
-  height: 100vh;
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(135deg, #141e30, #243b55);
+    color: #fff;
+    display: flex;
+    height: 100vh;
+    /* Rendre le contenu scrollable si nécessaire sur mobile */
+    min-height: 100vh; 
 }
 
 .login-page {
-  display: flex;
-  width: 100%;
+    display: flex;
+    width: 100%;
 }
 
 /* --- Partie gauche --- */
 .left-panel {
-  flex: 1;
-  padding: 80px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+    flex: 1;
+    padding: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
 }
 
 .app-title {
-  font-size: 3rem;
-  color: #00d4ff;
-  margin-bottom: 10px;
+    font-size: 3rem;
+    color: #00d4ff;
+    margin-bottom: 10px;
 }
 
 .left-panel h2 {
-  font-weight: 500;
-  margin-bottom: 20px;
+    font-weight: 500;
+    margin-bottom: 20px;
 }
 
 .description {
-  font-size: 1.1rem;
-  line-height: 1.6;
-  margin-bottom: 15px;
-  color: #ddd;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    margin-bottom: 15px;
+    color: #ddd;
 }
 
 /* --- Partie droite --- */
 .right-panel {
-  flex: 1;
-  background-color: #ffffff10;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    flex: 1;
+    background-color: #ffffff10;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .form-container {
-  background-color: rgba(255, 255, 255, 0.1);
-  padding: 40px 50px;
-  border-radius: 15px;
-  backdrop-filter: blur(10px);
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
-  width: 80%;
-  max-width: 380px;
-  text-align: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 40px 50px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+    width: 80%;
+    max-width: 380px;
+    text-align: center;
 }
 
 .form-container h2 {
-  margin-bottom: 20px;
-  color: #fff;
+    margin-bottom: 20px;
+    color: #fff;
 }
 
 input {
-  width: 100%;
-  padding: 12px;
-  margin: 10px 0;
-  border: none;
-  border-radius: 8px;
-  background: #ffffff20;
-  color: #fff;
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 8px;
+    background: #ffffff20;
+    color: #fff;
 }
 
 input::placeholder {
-  color: #ccc;
+    color: #ccc;
 }
 
 button {
-  width: 100%;
-  padding: 12px;
-  background-color: #00d4ff;
-  color: #141e30;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: 0.3s;
+    width: 100%;
+    padding: 12px;
+    background-color: #00d4ff;
+    color: #141e30;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: 0.3s;
 }
 
 button:hover {
-  background-color: #00a0cc;
+    background-color: #00a0cc;
 }
 
 .flash-messages {
-  list-style: none;
-  padding: 0;
-  margin: 10px 0;
+    list-style: none;
+    padding: 0;
+    margin: 10px 0;
 }
 
 .flash-messages li {
-  background-color: #ff5050;
-  padding: 8px;
-  border-radius: 5px;
+    background-color: #ff5050;
+    padding: 8px;
+    border-radius: 5px;
 }
 
 .register-text {
-  margin-top: 15px;
-  font-size: 0.9rem;
+    margin-top: 15px;
+    font-size: 0.9rem;
 }
 
 .register-text a {
-  color: #00d4ff;
-  text-decoration: none;
+    color: #00d4ff;
+    text-decoration: none;
 }
 
 .register-text a:hover {
-  text-decoration: underline;
+    text-decoration: underline;
 }
 
-/* --- Responsive --- */
+/* --- 📱 Media Query pour le Mode Mobile et Tablette (écrans < 900px) --- */
 @media (max-width: 900px) {
-  .login-page {
-    flex-direction: column;
-  }
+    /* 1. Basculer la mise en page en colonne */
+    .login-page {
+        flex-direction: column;
+        height: auto; /* Permet au contenu de s'étendre au-delà de 100vh */
+        min-height: 100vh;
+    }
+    
+    body {
+        /* Permet le défilement si le contenu dépasse la hauteur */
+        height: auto; 
+    }
 
-  .left-panel {
-    text-align: center;
-    padding: 40px 20px;
-  }
+    /* 2. Ajuster le panneau de gauche */
+    .left-panel {
+        text-align: center;
+        padding: 40px 20px; /* Réduire le padding */
+        /* Supprimer la partie descriptive sur les écrans très petits pour gagner de la place */
+    }
+    
+    /* 3. Ajuster la taille des titres */
+    .app-title {
+        font-size: 2.5rem;
+    }
 
-  .right-panel {
-    padding: 30px;
-  }
+    /* 4. Ajuster le panneau de droite (formulaire) */
+    .right-panel {
+        padding: 30px;
+        /* Sur mobile, on veut que le panneau de droite occupe plus de place verticale */
+        flex-grow: 0; 
+        /* Enlever l'arrière-plan semi-transparent pour ne pas le voir derrière le form-container */
+        background-color: transparent; 
+    }
+    
+    .form-container {
+        width: 90%;
+        max-width: none; /* Le laisser s'étendre davantage */
+        padding: 30px;
+        background-color: rgba(255, 255, 255, 0.15); /* Rendre le fond du formulaire plus opaque */
+    }
+}
+
+/* --- 📱 Media Query pour les très petits écrans (smartphones étroits) --- */
+@media (max-width: 500px) {
+    /* Cachez la description pour prioriser le formulaire sur les très petits écrans */
+    .left-panel h2, .description {
+        display: none;
+    }
+    
+    .left-panel {
+        padding: 20px 10px; /* Encore moins de padding */
+    }
+    
+    .app-title {
+        margin-bottom: 0;
+    }
 }

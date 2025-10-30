@@ -1,13 +1,14 @@
 /* 🌌 Style global pour la page détails */
-/*body {
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  background: linear-gradient(135deg, #2d89ef, #00b294);
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh;
-}*/
+/* Assurez-vous que le body de votre base.html permet une hauteur flexible */
+/* body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #2d89ef, #00b294);
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+} */
 
 .vm-details-container {
     width: 90%;
@@ -22,18 +23,25 @@
 }
 
 nav a {
-  color: white;
-  margin: 0 15px;
-  text-decoration: none;
-  transition: 0.3s;
+    color: white;
+    margin: 0 15px;
+    text-decoration: none;
+    transition: 0.3s;
 }
 
 nav a:hover, nav a.active {
-  color: #2d89ef;
-  border-bottom: 2px solid #2d89ef;
-  padding-bottom: 3px;
+    color: #2d89ef;
+    border-bottom: 2px solid #2d89ef;
+    padding-bottom: 3px;
 }
 
+.logo {
+  font-size: 26px;
+  font-weight: bold;
+  color: #2d89ef;
+  letter-spacing: 1.5px;
+  cursor: pointer;
+}
 
 /* En-tête de la VM */
 .vm-header {
@@ -50,15 +58,25 @@ nav a:hover, nav a.active {
     margin: 0;
 }
 
+/* Status (pour référence) */
+.status { font-weight: bold; }
+.status.running { color: #28a745; }
+.status.stopped { color: #dc3545; }
+.status.creating { color: #ffc107; }
+
 /* Navigation par onglets */
 .tab-navigation {
     display: flex;
     gap: 10px;
     margin-bottom: 30px;
     border-bottom: 1px solid rgba(255,255,255,0.2);
+    /* Ajout: Permet le débordement horizontal sur mobile si nécessaire */
+    overflow-x: auto;
+    white-space: nowrap;
 }
 
 .tab-btn {
+    flex-shrink: 0; /* Empêche les boutons de rétrécir */
     background: rgba(255,255,255,0.1);
     border: none;
     color: #ccc;
@@ -90,7 +108,7 @@ nav a:hover, nav a.active {
     display: block;
 }
 
-/* Grille des détails */
+/* Grille des détails (Onglet Détails) */
 .details-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -137,7 +155,7 @@ nav a:hover, nav a.active {
     overflow-y: auto;
 }
 
-/* Console */
+/* Console (Onglet Console) */
 .console-container {
     background: rgba(0,0,0,0.3);
     border-radius: 8px;
@@ -148,32 +166,26 @@ nav a:hover, nav a.active {
     text-align: center;
 }
 
-.console-placeholder {
-    padding: 40px;
-    background: rgba(255,255,255,0.05);
-    border-radius: 8px;
-    margin-top: 20px;
-}
-
-.console-actions {
+.console-header {
     display: flex;
-    gap: 15px;
-    justify-content: center;
-    margin-top: 20px;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.btn-console {
-    background: #2d89ef;
-    color: white;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
+.console-header h3 {
+    margin: 0;
+    font-size: 18px;
+    color: #00d4ff;
 }
 
-.btn-console:hover {
-    background: #1b6fd1;
+.console-controls {
+    display: flex;
+    flex-wrap: wrap; /* Important pour le responsive */
+    gap: 8px;
+    align-items: center;
 }
 
 .console-offline {
@@ -183,7 +195,7 @@ nav a:hover, nav a.active {
     border-radius: 8px;
 }
 
-/* Métriques */
+/* Métriques (Onglet Métriques) */
 .metrics-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -200,310 +212,165 @@ nav a:hover, nav a.active {
 }
 
 .metric-card h3 {
-    color: #2d89ef;
-    margin-bottom: 15px;
-    font-size: 14px;
+    color: #00d4ff;
+    margin-bottom: 10px;
+    font-size: 18px;
 }
 
 .metric-value {
-    font-size: 24px;
+    font-size: 2rem;
     font-weight: bold;
-    color: #00b4d8;
-    margin-bottom: 15px;
+    margin: 10px 0;
+    color: white;
 }
 
-.graph-placeholder {
-    background: rgba(0,0,0,0.3);
-    height: 100px;
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #ccc;
+.metric-graph {
+    margin: 15px 0;
+}
+
+.graph-bar {
+    width: 100%;
+    height: 20px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.graph-fill {
+    height: 100%;
+    border-radius: 10px;
+    transition: width 0.5s ease;
 }
 
 .metrics-actions {
     display: flex;
     gap: 15px;
     justify-content: center;
+    margin-top: 20px;
+    flex-wrap: wrap; /* Pour le responsive */
 }
 
-.btn-refresh, .btn-export {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.btn-export {
-    background: #6c757d;
-}
-
-.btn-refresh:hover {
-    background: #218838;
-}
-
-.btn-export:hover {
-    background: #5a6268;
-}
-
-/* Actions rapides */
+/* Actions Rapides */
 .quick-actions {
-    margin-top: 30px;
     padding-top: 20px;
-    border-top: 2px solid rgba(255,255,255,0.1);
+    border-top: 1px solid rgba(255,255,255,0.1);
+    margin-top: 30px;
 }
 
 .quick-actions h3 {
-    color: #2d89ef;
+    color: #ffc107;
     margin-bottom: 15px;
 }
 
-.quick-actions .action-buttons {
+.action-buttons {
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+    gap: 10px;
+    flex-wrap: wrap; /* Pour le responsive */
 }
 
-/* Statuts */
-.status {
-    padding: 6px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: bold;
-}
-
-.status.running {
-    background: rgba(40, 167, 69, 0.2);
-    color: #28a745;
-}
-
-.status.stopped {
-    background: rgba(220, 53, 69, 0.2);
-    color: #dc3545;
-}
-
-.status.creating {
-    background: rgba(255, 193, 7, 0.2);
-    color: #ffc107;
-}
-
-/* Boutons */
-.btn-start { background-color: #28a745; }
-.btn-stop { background-color: #ffc107; color: black; }
-.btn-delete { background-color: #dc3545; }
-.btn-back { 
-    background-color: #6c757d; 
-    color: white; 
-    padding: 10px 20px;
-    text-decoration: none;
-    border-radius: 6px;
+.action-buttons form, .action-buttons a {
     display: inline-block;
 }
 
-.btn-start:hover { background-color: #218838; }
-.btn-stop:hover { background-color: #e0a800; }
-.btn-delete:hover { background-color: #c82333; }
-.btn-back:hover { 
-    background-color: #5a6268; 
-    text-decoration: none;
-    color: white;
+.btn-start { background-color: #28a745; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
+.btn-stop { background-color: #ffc107; color: black; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
+.btn-delete { background-color: #dc3545; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; }
+.btn-back { 
+    background-color: #6c757d; color: white; border: none; padding: 10px 15px; border-radius: 6px; cursor: pointer; 
+    text-decoration: none; display: inline-block; text-align: center;
 }
 
-/* Animation */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
+/* ---------------------------------------------------- */
+/* --- 📱 Media Query pour le Mode Mobile (< 900px) --- */
+/* ---------------------------------------------------- */
+@media screen and (max-width: 900px) {
+    .vm-details-container {
+        padding: 20px;
+        width: 95%;
+        padding-left: 10px;
+        margin-right: 70px;
+        margin-left: -5px;
+    }
 
-/* Responsive */
-@media (max-width: 768px) {
+    /* En-tête de la VM : Empiler le titre et le statut */
+    .vm-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        margin-bottom: 20px;
+    }
+    
+    .vm-header h1 {
+        font-size: 1.8em;
+    }
+
+    /* Grille des détails : Passer à une seule colonne */
     .details-grid {
         grid-template-columns: 1fr;
     }
     
+    .detail-card.full-width {
+        grid-column: 1 / 1; /* Il n'y a qu'une seule colonne */
+    }
+
+    /* Onglets de navigation : Réduire la taille de police */
     .tab-navigation {
-        flex-direction: column;
+        gap: 5px;
     }
     
-    .metrics-grid {
-        grid-template-columns: 1fr;
+    .tab-btn {
+        padding: 10px 15px;
+        font-size: 13px;
     }
     
-    .quick-actions .action-buttons {
-        flex-direction: column;
-    }
-    
-    .vm-header {
-        flex-direction: column;
-        gap: 15px;
-        text-align: center;
-    }
-}
-
-.logo {
-  font-size: 26px;
-  font-weight: bold;
-  color: #2d89ef;
-  letter-spacing: 1.5px;
-  cursor: pointer;
-}
-
-/* Console VNC */
-.console-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding: 15px;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 8px;
-}
-
-.console-header h3 {
-    margin: 0;
-    color: #2d89ef;
-}
-
-.console-controls {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-#vnc-status {
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-weight: bold;
-    font-size: 14px;
-}
-
-#vnc-area {
-    width: 100%;
-    height: 600px;
-    background: #000;
-    border: 2px solid #333;
-    border-radius: 8px;
-    overflow: hidden;
-    position: relative;
-}
-
-#vnc-canvas {
-    width: 100%;
-    height: 100%;
-    cursor: none;
-}
-
-.console-info {
-    margin-top: 15px;
-    padding: 10px;
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: 6px;
-    font-size: 14px;
-}
-
-.console-info p {
-    margin: 0;
-    color: #ccc;
-}
-
-/* Plein écran */
-#vnc-area:fullscreen {
-    width: 100vw;
-    height: 100vh;
-    border: none;
-    border-radius: 0;
-}
-
-/* Boutons console */
-.btn-console {
-    background: #6c757d;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background 0.3s;
-}
-
-.btn-console:hover {
-    background: #5a6268;
-}
-
-/* États de connexion */
-.vnc-connecting { color: #ffc107; }
-.vnc-connected { color: #28a745; }
-.vnc-disconnected { color: #dc3545; }
-.vnc-error { color: #dc3545; }
-
-/* Responsive */
-@media (max-width: 768px) {
+    /* Console : Ajustement des contrôles */
     .console-header {
         flex-direction: column;
+        align-items: flex-start;
         gap: 10px;
-        text-align: center;
-    }
-    
-    #vnc-area {
-        height: 400px;
     }
     
     .console-controls {
-        flex-wrap: wrap;
+        width: 100%;
         justify-content: center;
+        margin-top: 5px;
     }
-}
+    
+    .btn-console {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
 
-/* Styles pour le terminal */
-#terminal-container {
-    position: relative;
-    border: 1px solid #444;
-    background: #000;
-}
+    /* Métriques : Les cartes passent automatiquement en colonne grâce à auto-fit/minmax(250px) */
+    .metrics-grid {
+        /* Garde la définition du desktop, minmax(250px) force l'empilement sur mobile */
+        gap: 15px;
+    }
+    
+    .metrics-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-refresh, .btn-auto-refresh, .btn-export {
+        width: 100%;
+        padding: 12px;
+    }
 
-.xterm .xterm-screen {
-    border-radius: 4px;
-}
-
-.xterm .xterm-viewport {
-    border-radius: 4px;
-}
-
-.terminal-controls {
-    margin: 10px 0;
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.btn-console {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 8px 12px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    transition: background 0.3s;
-}
-
-.btn-console:hover {
-    background: #0056b3;
-}
-
-.btn-console:disabled {
-    background: #6c757d;
-    cursor: not-allowed;
-}
-
-.connection-status {
-    padding: 8px 12px;
-    background: #f8f9fa;
-    border-radius: 4px;
-    margin-top: 10px;
-    font-family: monospace;
+    /* Actions Rapides : Les boutons s'empilent ou s'ajustent */
+    .action-buttons {
+        justify-content: space-around;
+        gap: 5px;
+    }
+    
+    .action-buttons form, .action-buttons a {
+        flex-grow: 1; /* Permet aux boutons de mieux s'étirer */
+        min-width: 120px;
+    }
+    
+    .btn-start, .btn-stop, .btn-delete, .btn-back {
+        width: 100%;
+        text-align: center;
+        padding: 10px 5px;
+    }
 }

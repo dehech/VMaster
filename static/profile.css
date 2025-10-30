@@ -118,3 +118,29 @@ nav a:hover, nav a.active {
   letter-spacing: 1.5px;
   cursor: pointer;
 }
+
+/* --- 📱 Media Query pour le Mode Mobile (écrans < 600px) --- */
+@media screen and (max-width: 600px) {
+    body {
+        /* Permet au contenu de défiler si le clavier virtuel apparaît */
+        min-height: 100vh; 
+        height: auto; 
+        align-items: flex-start; /* Aligner en haut sur mobile pour la vue */
+        padding-top: 80px; /* Ajouter un peu d'espace en haut */
+        padding-bottom: 20px;
+    }
+    
+    .container {
+        /* Utiliser une largeur fluide mais avec une marge pour respirer */
+        width: 90%; 
+        max-width: none; /* Supprimer la limite de largeur fixe */
+        padding: 25px; /* Réduire le padding */
+        margin: 20px auto; /* Centrer et ajouter une marge */
+        margin-left: 15px; /* ou la valeur de votre choix */
+        margin-right: auto; /* maintient l'alignement à droite */
+    }
+    
+    h1 {
+        font-size: 24px;
+    }
+}
