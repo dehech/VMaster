@@ -7,6 +7,9 @@ import sys
 import json
 from datetime import datetime
 import random
+import webbrowser
+from threading import Timer
+import os
 
 app = Flask(__name__)
 app.secret_key = 'supersecretkey'
@@ -536,5 +539,12 @@ def get_vm_metrics(vm_id):
             'timestamp': datetime.now().isoformat()
         })
 
+def open_browser():
+    # Ouvre automatiquement le navigateur sur ton IP locale
+    webbrowser.open_new("http://127.0.0.1:5000")
+
+
 if __name__ == '__main__':
+    if not os.environ.get("WERKZEUG_RUN_MAIN"):
+        Timer(1, open_browser).start()
     app.run(debug=True, host='0.0.0.0', port=5000)
