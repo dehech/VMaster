@@ -10,23 +10,23 @@ It allows users to create, configure, and monitor VMs easily — all powered by 
 
 ⚙️ Custom VM Creation – Deploy virtual machines with custom configurations such as:
 
-    CPU cores
+    *CPU cores
 
-    RAM size
+    *RAM size
 
-    Disk space
+    *Disk space
 
-    Operating System (OS)
+    *Operating System (OS)
 
 📊 Real-Time Monitoring – Track the usage of:
 
-    CPU
+    *CPU
 
-    RAM
+    *RAM
 
-    Disk storage
+    *Disk storage
 
-    Network traffic
+    *Network traffic
 
 🤖 Automation Scripts – All provisioning and monitoring tasks are handled through automated scripts.
 
@@ -64,13 +64,14 @@ It allows users to create, configure, and monitor VMs easily — all powered by 
     simply run the following command from the project directory:
 
         python recreate_database.py
+
     This script will:
 
-    Drop existing tables
+    *Drop existing tables
 
-    Recreate the database schema
+    *Recreate the database schema
 
-    Prepare it for a fresh start
+    *Prepare it for a fresh start
 
 ⚠️ Warning: This will delete all existing data permanently.
 
