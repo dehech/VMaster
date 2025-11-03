@@ -122,22 +122,22 @@ nav a:hover, nav a.active {
 /* --- 📱 Media Query pour le Mode Mobile (écrans < 600px) --- */
 @media screen and (max-width: 600px) {
     body {
-        /* Permet au contenu de défiler si le clavier virtuel apparaît */
+        
         min-height: 100vh; 
         height: auto; 
-        align-items: flex-start; /* Aligner en haut sur mobile pour la vue */
-        padding-top: 80px; /* Ajouter un peu d'espace en haut */
+        align-items: flex-start; 
+        padding-top: 80px; 
         padding-bottom: 20px;
     }
     
     .container {
-        /* Utiliser une largeur fluide mais avec une marge pour respirer */
+       
         width: 90%; 
-        max-width: none; /* Supprimer la limite de largeur fixe */
-        padding: 25px; /* Réduire le padding */
-        margin: 20px auto; /* Centrer et ajouter une marge */
-        margin-left: 15px; /* ou la valeur de votre choix */
-        margin-right: auto; /* maintient l'alignement à droite */
+        max-width: none; 
+        padding: 25px; 
+        margin: 20px auto; 
+        margin-left: 15px; 
+        margin-right: auto; 
     }
     
     h1 {

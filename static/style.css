@@ -99,7 +99,7 @@ a:hover {
   color: #fff;
   display: flex;
   flex-direction: column;
-  animation: fadeIn 0.8s ease; /* Animation ajoutée ici */
+  animation: fadeIn 0.8s ease; 
 }
 
 /* --- Header --- */
@@ -221,7 +221,7 @@ main p {
   font-size: 26px;
   font-weight: bold;
   color: #2d89ef;
- /*text-transform: uppercase;*/
+ 
   letter-spacing: 1.5px;
   cursor: pointer;
 }

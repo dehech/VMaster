@@ -138,14 +138,14 @@ button {
 @media screen and (max-width: 768px) {
     /* Ajustement de la largeur du conteneur principal */
     .dashboard-container {
-        width: 95%; /* Prend plus de place sur les petits écrans */
-        padding: 20px; /* Réduction du padding */
-        margin-left: -11px; /* ← DÉCALAGE VERS LA GAUCHE */
+        width: 95%; 
+        padding: 20px; 
+        margin-left: -11px; 
     }
     
     /* 📋 Rendre le tableau responsive (Table-to-Card) */
     .vm-table {
-        border: 0; /* Supprime la bordure du tableau */
+        border: 0; 
     }
 
     /* Masquer les en-têtes du tableau sur mobile */
@@ -163,9 +163,9 @@ button {
     /* Rendre les lignes du tableau affichables comme des blocs ("cartes") */
     .vm-table tr {
         display: block;
-        margin-bottom: 1.5em; /* Espace entre les cartes */
-        border-bottom: 4px solid #2d89ef; /* Sépare visuellement les "cartes" de VM */
-        background: rgba(255, 255, 255, 0.05); /* Légère couleur pour la carte */
+        margin-bottom: 1.5em;
+        border-bottom: 4px solid #2d89ef; 
+        background: rgba(255, 255, 255, 0.05); 
         border-radius: 8px;
         box-shadow: 0 4px 10px rgba(0,0,0,0.2);
     }
@@ -175,7 +175,7 @@ button {
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: block;
         text-align: right;
-        padding: 10px 10px 10px 50%; /* Ajout de padding-left pour l'étiquette */
+        padding: 10px 10px 10px 50%; 
         position: relative;
     }
 
@@ -191,8 +191,8 @@ button {
         white-space: nowrap;
         text-align: left;
         font-weight: bold;
-        color: #00b294; /* Couleur de l'étiquette */
-        background: rgba(255, 255, 255, 0.05); /* Fond pour l'étiquette */
+        color: #00b294; 
+        background: rgba(255, 255, 255, 0.05); 
     }
     
     /* Le dernier TD d'une carte ne devrait pas avoir de bordure pour plus de clarté */
@@ -202,10 +202,10 @@ button {
     
     /* Ajustement des actions */
     .action-buttons {
-        text-align: center; /* Centrer les boutons d'action */
+        text-align: center; 
         padding-top: 15px;
         padding-bottom: 15px;
-        border-bottom: none !important; /* Pas de bordure pour le bas de la carte */
+        border-bottom: none !important; 
     }
     
     /* Mise en ligne des formulaires de boutons */
@@ -214,7 +214,7 @@ button {
     }
     
     .action-buttons button {
-        width: auto; /* Permet aux boutons de ne pas prendre toute la largeur */
+        width: auto; 
         display: inline-block;
     }
 }

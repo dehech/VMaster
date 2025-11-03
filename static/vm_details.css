@@ -304,16 +304,16 @@ nav a:hover, nav a.active {
         font-size: 1.8em;
     }
 
-    /* Grille des détails : Passer à une seule colonne */
+    /* Grille des détails  */
     .details-grid {
         grid-template-columns: 1fr;
     }
     
     .detail-card.full-width {
-        grid-column: 1 / 1; /* Il n'y a qu'une seule colonne */
+        grid-column: 1 / 1; 
     }
 
-    /* Onglets de navigation : Réduire la taille de police */
+    /* Onglets de navigation  */
     .tab-navigation {
         gap: 5px;
     }
@@ -341,9 +341,9 @@ nav a:hover, nav a.active {
         font-size: 12px;
     }
 
-    /* Métriques : Les cartes passent automatiquement en colonne grâce à auto-fit/minmax(250px) */
+    /* Métriques  */
     .metrics-grid {
-        /* Garde la définition du desktop, minmax(250px) force l'empilement sur mobile */
+        
         gap: 15px;
     }
     
@@ -357,14 +357,14 @@ nav a:hover, nav a.active {
         padding: 12px;
     }
 
-    /* Actions Rapides : Les boutons s'empilent ou s'ajustent */
+    
     .action-buttons {
         justify-content: space-around;
         gap: 5px;
     }
     
     .action-buttons form, .action-buttons a {
-        flex-grow: 1; /* Permet aux boutons de mieux s'étirer */
+        flex-grow: 1; 
         min-width: 120px;
     }
     

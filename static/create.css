@@ -65,42 +65,7 @@ textarea {
   resize: vertical;
   font-family: monospace;
 }
-/*
-.btn-create {
-  background: #00b4d8;
-  color: white;
-  padding: 12px;
-  border: none;
-  margin-top: 20px;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 48%;
-  margin-right: 4%;
-  transition: background 0.3s;
-}
 
-.btn-reset {
-  background: #6c757d;
-  color: white;
-  padding: 12px;
-  border: none;
-  margin-top: 20px;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  width: 48%;
-  transition: background 0.3s;
-}
-
-.btn-create:hover {
-  background: #0096c7;
-}
-
-.btn-reset:hover {
-  background: #5a6268;
-}
-*/
 .button-container {
   display: flex;
   justify-content: center;
