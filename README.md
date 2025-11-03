@@ -1,10 +1,10 @@
-🧠 VMaster – Automated Virtual Machine Management App
+### 🧠 VMaster – Automated Virtual Machine Management App
 
 VMaster is a lightweight and intelligent web application designed to automate the management of virtual machines (VMs).
 It allows users to create, configure, and monitor VMs easily — all powered by automation scripts.
 
 
-🚀 Main Features
+🚀 **Main Features**
 
 👤 User Accounts – Create an account and log in securely to manage your VMs.
 
@@ -34,7 +34,7 @@ It allows users to create, configure, and monitor VMs easily — all powered by 
 
 ********************************************************************************************************
 
-⚙️ Installation & Setup
+⚙️ **Installation & Setup**
 
         Clone the project
         git clone https://github.com/dehech/VMaster.git
@@ -45,7 +45,7 @@ It allows users to create, configure, and monitor VMs easily — all powered by 
 
 ********************************************************************************************************
 
-🧱 Build an Executable
+🧱 **Build an Executable**
 
     You can create a standalone executable version of VMaster using cx_Freeze.
     The setup.py file is already prepared — just run:
@@ -58,7 +58,7 @@ It allows users to create, configure, and monitor VMs easily — all powered by 
 
 ********************************************************************************************************
 
-🔄 Reset Database
+🔄 **Reset Database**
 
     If you want to recreate the entire database (for a clean start),
     simply run the following command from the project directory:
@@ -77,7 +77,7 @@ It allows users to create, configure, and monitor VMs easily — all powered by 
 
 ********************************************************************************************************
 
-📁 Project Structure
+📁 **Project Structure**
 
     Below is the directory structure of the VMaster project:
 
@@ -103,13 +103,13 @@ It allows users to create, configure, and monitor VMs easily — all powered by 
 
 ********************************************************************************************************
 
-🪪 License
+🪪 **License**
 
 You are free to use, modify, and distribute it with proper attribution.
 
 ********************************************************************************************************
 
-👨‍💻 Author
+👨‍💻 **Author**
 
 Mohamed Firas Dehech
 Email: [firas.dehech@gmail.com]
